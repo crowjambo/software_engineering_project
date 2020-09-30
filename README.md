@@ -1,6 +1,5 @@
 
 [![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 
@@ -63,18 +62,14 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=flat-square
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=flat-square
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=flat-square
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=flat-square
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
+[contributors-shield]: https://img.shields.io/github/contributors/crowjambo/software_engineering_project
+[contributors-url]: https://github.com/crowjambo/software_engineering_project/graphs/contributors
+[stars-shield]: https://img.shields.io/github/stars/crowjambo/software_engineering_project.svg?style=flat-square
+[stars-url]: https://github.com/crowjambo/software_engineering_project/stargazers
+[issues-shield]: https://img.shields.io/github/issues/crowjambo/software_engineering_project.svg?style=flat-square
+[issues-url]: https://github.com/crowjambo/software_engineering_project/issues
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=flat-square
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
+[license-url]: https://github.com/crowjambo/software_engineering_project/blob/master/LICENSE.MD
 [product-screenshot]: https://i.pinimg.com/originals/58/1d/70/581d70d8bbf01e11a5d537f542ea2d96.png
 [product-screenshot2]: https://cdn57.androidauthority.net/wp-content/uploads/2019/03/Chewy-screenshot-2019-1200x675.jpg
 
