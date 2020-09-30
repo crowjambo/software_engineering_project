@@ -8,7 +8,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="https://www.zilliondesigns.com/blog/wp-content/uploads/Clear-App-Icon.jpg" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Drugz no sell pls chat application</h3>
@@ -37,7 +37,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]]()
 
 Private end to end messaging app! Like none other before it (write more once word finished)
 
@@ -49,7 +49,7 @@ Btw mention its a class project and so on and on
 
 ### Screenshots
 
-[![Some text][product-screenshot2]](https://cdn57.androidauthority.net/wp-content/uploads/2019/03/Chewy-screenshot-2019-1200x675.jpg)
+[![Some text][product-screenshot2]]()
 
 ### Built With
 Build using Flutter and Android Studio. +List of libraries we use! and other tools
@@ -75,6 +75,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: https://i.pinimg.com/originals/58/1d/70/581d70d8bbf01e11a5d537f542ea2d96.png
 [product-screenshot2]: https://cdn57.androidauthority.net/wp-content/uploads/2019/03/Chewy-screenshot-2019-1200x675.jpg
 
