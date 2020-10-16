@@ -23,8 +23,15 @@ class HomeScreen extends StatelessWidget {
            // A list of contacts goes here I suppose?
            children: <Widget>[
              Container(
+               // Sets the padding between the user icon and the little ring around it :3
+               padding: EdgeInsets.all(1),
                // Makes the user icon pretty :3
                decoration: BoxDecoration(
+                 // User icon border
+                 border: Border.all(
+                   width: 2,
+                   color: Theme.of(context).primaryColor,
+                 ),
                  // Shape of the icon shadow
                  shape: BoxShape.circle,
                  // The icon shadow itself
