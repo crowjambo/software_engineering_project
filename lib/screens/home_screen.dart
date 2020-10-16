@@ -36,6 +36,7 @@ class HomeScreen extends StatelessWidget {
                       // Sets the padding between the user icon and the little ring around it :3
                       padding: EdgeInsets.all(2),
                       // Makes the user icon pretty :3
+                      // Checks whether the messages were read, if not, a ring appears around the icon
                       decoration: chat.unread
                           ? BoxDecoration(
                               borderRadius:
@@ -84,13 +85,31 @@ class HomeScreen extends StatelessWidget {
                             // Assigns the content spacing
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              // For user's name
-                              Text(
-                                chat.sender.name,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Row(
+                                children: <Widget>[
+                                  // For user's name
+                                  Text(
+                                    chat.sender.name,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  // Container for the little grin dot beside the username
+                                  // If the user is online
+                                  chat.sender.isOnline ?
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 5),
+                                    width: 7,
+                                      height: 7,
+                                      decoration: BoxDecoration(
+                                        shape:  BoxShape.circle,
+                                        color: Colors.green,
+                                      ),
+                                  ) :
+                                      // If user if offline, the container is null
+                                      Container( child: null,)
+                                ],
                               ),
                               // For timestamp
                               Text(
