@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "539990440240",
+    "firebase_url": "https://softwareprojectchat.firebaseio.com",
+    "project_id": "softwareprojectchat",
+    "storage_bucket": "softwareprojectchat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539990440240:android:42a194b6cdc9905707b0f5",
+        "android_client_info": {
+          "package_name": "com.viko.software_engineering_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "539990440240-pp59g0j1a63mrlopercro9e9p5josb2a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx3gfyiTIpkFUYNy4h1mb2A4m1rFFjVOU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "539990440240-pp59g0j1a63mrlopercro9e9p5josb2a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "539990440240-a85696acrq15nckfk7gcl5rhpi2fr5eb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.viko.softwareEngineeringProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
