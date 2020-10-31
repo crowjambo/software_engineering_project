@@ -11,15 +11,9 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 8,
-        // Menu button
-        // leading: IconButton(
-        //   icon: Icon(Icons.menu),
-        //   onPressed: () {}, //TODO: Implement menu functionality
-        // ),
         title: Text('Inbox'),
       ),
       body: ListView.builder(
-          // I'm honestly know what this is for.
           itemCount: chats.length,
           // Builds the message and user data from message_model.dart
           itemBuilder: (BuildContext context, int index) {
