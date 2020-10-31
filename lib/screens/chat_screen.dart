@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/message_model.dart';
-import 'package:software_engineering_project/models/user_model.dart0  ';
+import 'package:software_engineering_project/models/user_model.dart';
 
 class ChatScreen extends StatefulWidget {
   final User user;
