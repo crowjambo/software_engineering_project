@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/message_model.dart';
-import 'package:software_engineering_project/models/user_model.dart0  ';
+import 'package:software_engineering_project/models/user_model.dart';
 
 class ChatScreen extends StatefulWidget {
   final User user;
@@ -45,39 +45,39 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           !isSameUser
               ? Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Text(
-                message.time,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.black45,
-                ),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      message.time,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black45,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 15,
+                        backgroundImage: AssetImage(message.sender.imageUrl),
+                      ),
                     ),
                   ],
-                ),
-                child: CircleAvatar(
-                  radius: 15,
-                  backgroundImage: AssetImage(message.sender.imageUrl),
-                ),
-              ),
-            ],
-          )
+                )
               : Container(
-            child: null,
-          ),
+                  child: null,
+                ),
         ],
       );
     } else {
@@ -112,38 +112,38 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           !isSameUser
               ? Row(
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 15,
+                        backgroundImage: AssetImage(message.sender.imageUrl),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      message.time,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.black45,
+                      ),
                     ),
                   ],
-                ),
-                child: CircleAvatar(
-                  radius: 15,
-                  backgroundImage: AssetImage(message.sender.imageUrl),
-                ),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                message.time,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.black45,
-                ),
-              ),
-            ],
-          )
+                )
               : Container(
-            child: null,
-          ),
+                  child: null,
+                ),
         ],
       );
     }
@@ -200,22 +200,21 @@ class _ChatScreenState extends State<ChatScreen> {
                     fontWeight: FontWeight.w400,
                   )),
               TextSpan(text: '\n'),
-              widget.user.isOnline ?
-              TextSpan(
-                text: 'Online',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w400,
-                ),
-              )
-                  :
-              TextSpan(
-                text: 'Offline',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w400,
-                ),
-              )
+              widget.user.isOnline
+                  ? TextSpan(
+                      text: 'Online',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    )
+                  : TextSpan(
+                      text: 'Offline',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    )
             ],
           ),
         ),
