@@ -11,14 +11,14 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 8,
         // Menu button
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {}, //TODO: Implement menu functionality
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.menu),
+        //   onPressed: () {}, //TODO: Implement menu functionality
+        // ),
         title: Text('Inbox'),
       ),
       body: ListView.builder(
-          // I'm honestly not sure what this is for. TODO: figure it out
+          // I'm honestly know what this is for.
           itemCount: chats.length,
           // Builds the message and user data from message_model.dart
           itemBuilder: (BuildContext context, int index) {
@@ -159,6 +159,37 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           }),
+        drawer: Drawer(
+                child: ListView(
+                  // Important: Remove any padding from the ListView.
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    DrawerHeader(
+                      child: Text('Drawer Header'),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    ListTile(
+                      title: Text('Item 1'),
+                      onTap: () {
+                        // Update the state of the app.
+                        // ...
+                        // Then close the drawer.
+                        Navigator.pop(context);
+                      },
+                    ),
+                    ListTile(
+                      title: Text('Item 2'),
+                      onTap: () {
+                        // Update the state of the app.
+                        // ...
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
     );
   }
 }
