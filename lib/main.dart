@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:software_engineering_project/screens/register_screen.dart';
 
 import './screens/home_screen.dart';
 import './screens/test_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:software_engineering_project/globals.dart';
 
 SharedPreferences prefs;
 
@@ -11,42 +13,37 @@ void main() async {
   //doing some firebase stuff im yet to understand
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  LocalStorage.init();
 
-  //checking for active users (hack? for first time launch)
-  setLaunchPrefs();
-
-  runApp(MyApp());
-}
-
-void setLaunchPrefs() async {
-  // obtain shared preferences
-  prefs = await SharedPreferences.getInstance();
-
-  if (prefs.getBool("HasLoggedInUser") == null || prefs.getBool("HasLoggedInUser") == false){
-    //select user
+  //setting default home of material app to be register screen
+  Widget defaultHome = RegisterScreen();
+  //changing it if user is already registered
+  if (currentUserExists()) {
+    defaultHome = HomeScreen();
   }
-  
-   print(prefs.getBool("HasLoggedInUser").toString());
 
-  // // set value
-  // if (prefs.getBool("IsFirstAppLaunch")) {
-  //   // generate UUID + save it
-  //   prefs.setBool('isFirstAppLaunch', true);
-  // }
+  runApp(new MaterialApp(
+    title: 'Drugz No Sell Plz',
+    debugShowCheckedModeBanner: false,
+    home: defaultHome,
+    theme: ThemeData(
+      primarySwatch: Colors.blue,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+    ),
+    routes: <String, WidgetBuilder>{
+      "/home": (BuildContext context) => HomeScreen(),
+      "/register": (BuildContext context) => RegisterScreen(),
+    },
+  ));
 }
 
-class MyApp extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Drugz No Sell Plz',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: RegisterScreen(),
-    );
+bool currentUserExists() {
+  try{
+    if(LocalStorage.prefs.getBool("userRegistered")){
+      return true;
+    }
+  }catch(error){
+    print(error);
+    return false;
   }
 }

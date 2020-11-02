@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:software_engineering_project/globals.dart';
 import 'package:uuid/uuid.dart';
@@ -8,7 +9,8 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  var userNameTextController = TextEditingController(text: "testUsername"); //TODO: remove test username
+  var userNameTextController =
+      TextEditingController(text: "testUsername"); //TODO: remove test username
 
   @override
   Widget build(BuildContext context) {
@@ -32,22 +34,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Padding(
               padding: EdgeInsets.all(kDefaultPadding),
               child: RaisedButton(
-                color: kAccentColor,
-                child: Text("Create New Identity"),
-                onPressed: (){
-                  if(userNameTextController.text.isEmpty){ _showNoUserNameAlert();}
-                  else _createUser();
-                }
-              ),
+                  color: kAccentColor,
+                  child: Text("Create New Identity"),
+                  onPressed: () {
+                    if (userNameTextController.text.isEmpty) {
+                      _showNoUserNameAlert();
+                    } else {
+                      _createUser(userNameTextController.text);
+                      //go to home screen
+                      Navigator.of(context).pushReplacementNamed('/home');
+                    }
+                  }),
             )
           ],
         ));
   }
 
-  void _createUser(){
+  void _createUser(String userName) async {
+    //TODO: add crypto key and userAddID and post that s to firebase
+    var users = FirebaseFirestore.instance.collection("Users");
+
+    //generating new UUID
     var uuidGen = Uuid();
     var uuid = uuidGen.v4();
-
+    //sending username and UUID to firebase storage
+    users
+        .add({
+          "username": userName,
+          "UUID": uuid,
+        })
+        .then((value) => print("user added uuid: " + uuid))
+        .catchError((error) => print("Failed to add user: $error"));
+    //saving username andUUID to local storage
+    await LocalStorage.init();
+    LocalStorage.prefs.setString("currentUUID", uuid);
+    LocalStorage.prefs.setString("currentUserName", userName);
+    LocalStorage.prefs.setBool("userRegistered", true);
   }
 
   void _showNoUserNameAlert() async {
@@ -69,5 +91,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
       },
     );
   }
-
 }
