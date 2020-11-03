@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:software_engineering_project/globals.dart';
 import 'package:uuid/uuid.dart';
@@ -57,11 +58,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     //generating new UUID
     var uuidGen = Uuid();
     var uuid = uuidGen.v4();
+
     //sending username and UUID to firebase storage
     users
-        .add({
+        .doc(uuid)
+        .set({
           "username": userName,
           "UUID": uuid,
+          "addedTime" : DateTime.now().toString()
         })
         .then((value) => print("user added uuid: " + uuid))
         .catchError((error) => print("Failed to add user: $error"));
