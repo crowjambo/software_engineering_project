@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/message_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
 import 'package:software_engineering_project/data/chats_data.dart';
-import 'package:software_engineering_project/globals.dart';
+import 'file:///C:/Users/Luke/Desktop/Software_Engineering_Project/lib/utility/globals.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:software_engineering_project/utility/qr_scanner.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -204,7 +206,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
             leading: Icon(Icons.add_circle_outline),
             onTap: () {
               //todo: implement contact add with qr codes
-              Navigator.pop(context);
+              return showDialog(context: context,
+              builder: (context) { return QRScanner();});
+              //Navigator.pop(context);
             },
           ),
           ListTile(
