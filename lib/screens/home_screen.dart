@@ -12,6 +12,13 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 8,
         title: Text('Inbox'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.add),
+            color: Colors.white, 
+            onPressed: () => {}
+          )
+        ],
       ),
       body: ListView.builder(
           itemCount: chats.length,
