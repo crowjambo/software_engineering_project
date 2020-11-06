@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/message_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
 import 'package:software_engineering_project/data/chats_data.dart';
+import 'package:software_engineering_project/screens/new_contact_screen.dart';
+
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -16,7 +18,9 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             color: Colors.white, 
-            onPressed: () => {}
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NewContactScreen())),
           )
         ],
       ),
