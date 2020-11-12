@@ -4,98 +4,98 @@ import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/message_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
 import 'package:software_engineering_project/data/chats_data.dart';
-import 'package:software_engineering_project/screens/new_contact_screen.dart';
-
+import 'file:///C:/Users/Luke/Desktop/Software_Engineering_Project/lib/utility/globals.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:software_engineering_project/utility/qr_scanner.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 8,
-        title: Text('Inbox'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.add),
-            color: Colors.white, 
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NewContactScreen())),
-          )
-        ],
-      ),
-      body: ListView.builder(
-          itemCount: chats.length,
-          // Builds the message and user data from message_model.dart
-          itemBuilder: (BuildContext context, int index) {
-            // With this we can call the message info
-            final Message chat = chats[index];
-            return GestureDetector(
-              // Opens chat scree on press
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    // This is where the user data is sent to the chat screen
-                    builder: (_) => ChatScreen(
-                      user: chat.sender,
+        appBar: AppBar(
+          elevation: 8,
+          title: Text(
+            'Inbox',
+            style: TextStyle(fontSize: kDefaultHeaderSize),
+          ),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.share), onPressed: () => {showQRCode(context)})
+          ],
+        ),
+        body: ChatList(),
+        drawer: MenuDrawer());
+  }
+
+  Future showQRCode(BuildContext context) {
+    LocalStorage.init();
+    var currentUUID = LocalStorage.prefs.getString("currentUUID");
+
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Container(
+                padding: const EdgeInsets.all(kDefaultPadding),
+                child: QrImage(
+                  data: currentUUID,
+                  version: QrVersions.auto,
+                  size: 320,
+                  gapless: true,
+                  errorStateBuilder: (cxt, err) {
+                    return Container(
+                      child: Center(
+                        child: Text(
+                          "Uh oh! Something went wrong...",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  },
+                )),
+          );
+        });
+  }
+}
+
+// chat list stuff
+class ChatList extends StatefulWidget {
+  @override
+  _ChatListState createState() => _ChatListState();
+}
+
+class _ChatListState extends State<ChatList> {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: chats.length,
+        // Builds the message and user data from message_model.dart
+        itemBuilder: (BuildContext context, int index) {
+          // With this we can call the message info
+          final Message chat = chats[index];
+          return Card(
+            elevation: 8,
+            child: GestureDetector(
+                // Opens chat scree on press
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      // This is where the user data is sent to the chat screen
+                      builder: (_) => ChatScreen(
+                        user: chat.sender,
+                      ),
+                    )),
+                child: Container(
+                    // Sets the padding for all elements in the container
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 15,
                     ),
-                  )),
-              child: Container(
-                // Sets the padding for all elements in the container
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 15,
-                ),
-                child: Row(
-                  // A list of contacts goes here I suppose? Or at least how they look :I
-                  children: <Widget>[
-                    Container(
-                        // Sets the padding between the user icon and the little ring around it :3
-                        padding: EdgeInsets.all(2),
-                        // Makes the user icon pretty :3
-                        // Checks whether the messages were read, if not, a ring appears around the icon
-                        decoration: chat.unread
-                            ? BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(40)),
-                                // User icon border
-                                border: Border.all(
-                                  width: 2,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                                // Shape of the icon shadow
-                                // shape: BoxShape.circle,
-                                // The icon shadow itself
-                                boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
-                                    )
-                                  ])
-                            : BoxDecoration(
-                                // Shape of the icon shadow
-                                shape: BoxShape.circle,
-                                // The icon shadow itself
-                                boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
-                                    )
-                                  ]),
-                        // The user icon
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundImage: AssetImage(chat.sender.imageUrl),
-                        )),
-                    // User's name by the icon, time, message preview
-                    Container(
+                    child: Container(
                         // This makes the with of the element 65 % of the device-width
                         width: MediaQuery.of(context).size.width * 0.65,
-                        padding: EdgeInsets.only(
-                          left: 20,
-                        ),
                         child: Column(
                           children: <Widget>[
                             Row(
@@ -108,9 +108,11 @@ class HomeScreen extends StatelessWidget {
                                     Text(
                                       chat.sender.name,
                                       style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                          fontSize: kDefaultHeaderSize,
+                                          fontWeight: FontWeight.bold,
+                                          decoration: chat.unread
+                                              ? TextDecoration.underline
+                                              : null),
                                     ),
                                     // Container for the little grin dot beside the username
                                     // If the user is online
@@ -136,9 +138,9 @@ class HomeScreen extends StatelessWidget {
                                 Text(
                                   chat.time,
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w300,
-                                    color: Colors.black54,
+                                    color: kAccentBlack,
                                   ),
                                 )
                               ],
@@ -151,51 +153,92 @@ class HomeScreen extends StatelessWidget {
                               child: Text(
                                 chat.text,
                                 style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.black54,
+                                  color: kAccentBlack,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 2,
                               ),
                             ),
                           ],
-                        ))
-                  ],
-                ),
-              ),
-            );
-          }),
-        drawer: Drawer(
-                child: ListView(
-                  // Important: Remove any padding from the ListView.
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    DrawerHeader(
-                      child: Text('Drawer Header'),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                      ),
-                    ),
-                    ListTile(
-                      title: Text('Item 1'),
-                      onTap: () {
-                        // Update the state of the app.
-                        // ...
-                        // Then close the drawer.
-                        Navigator.pop(context);
-                      },
-                    ),
-                    ListTile(
-                      title: Text('Item 2'),
-                      onTap: () {
-                        // Update the state of the app.
-                        // ...
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              ),
+                        )))),
+          );
+        });
+  }
+}
+
+// drawer stuff
+class MenuDrawer extends StatefulWidget {
+  @override
+  _MenuDrawerState createState() => _MenuDrawerState();
+}
+
+class _MenuDrawerState extends State<MenuDrawer> {
+  _MenuDrawerState() {
+    LocalStorage.init();
+  }
+
+  var userName =
+      LocalStorage.prefs.getString("currentUserName") ?? "hate this bug";
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        // Important: Remove any padding from the ListView.
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            child: Text(userName),
+            decoration: BoxDecoration(
+              color: Colors.blue,
+            ),
+          ),
+          ListTile(
+            title: Text("Contacts"),
+            leading: Icon(Icons.contacts_outlined),
+            onTap: () {
+              //todo: user screen to create new convo
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text("Add Contact"),
+            leading: Icon(Icons.add_circle_outline),
+            onTap: () {
+              //todo: implement contact add with qr codes
+              return showDialog(context: context,
+              builder: (context) { return QRScanner();});
+              //Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text("Delete Your Account"),
+            leading: Icon(Icons.delete_forever),
+            onTap: () {
+              deleteCurrentUser();
+            },
+          ),
+        ],
+      ),
     );
+  }
+
+  //this method deletes user info from local storage and firebase Users collection
+  void deleteCurrentUser() async {
+    //TODO: delete user messages in local storage
+
+    LocalStorage.init();
+    var currentUUID = LocalStorage.prefs.getString("currentUUID");
+
+    var users = FirebaseFirestore.instance.collection("Users");
+    await users
+        .doc(currentUUID)
+        .delete()
+        .catchError((error) => print("Failed to add user: $error"));
+
+    LocalStorage.prefs.remove("currentUUID");
+    LocalStorage.prefs.remove("currentUserName");
+    LocalStorage.prefs.setBool("userRegistered", false);
+    Navigator.of(context).pushReplacementNamed("/register");
   }
 }
