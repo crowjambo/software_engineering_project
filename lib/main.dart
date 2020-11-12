@@ -3,7 +3,7 @@ import 'package:software_engineering_project/screens/register_screen.dart';
 import './utility/qr_scanner.dart';
 import './screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'file:///C:/Users/Luke/Desktop/Software_Engineering_Project/lib/utility/globals.dart';
+import 'package:software_engineering_project/utility/local_storage.dart';
 
 void main() async {
   //doing some firebase stuff im yet to understand

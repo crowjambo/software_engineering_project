@@ -5,6 +5,7 @@ import 'package:software_engineering_project/models/message_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
 import 'package:software_engineering_project/data/chats_data.dart';
 import 'package:software_engineering_project/utility/globals.dart';
+import 'package:software_engineering_project/utility/local_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -203,7 +204,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
             title: Text("Add Contact"),
             leading: Icon(Icons.add_circle_outline),
             onTap: () {
-              //todo: implement contact add with qr codes
               Navigator.pushNamed(context, "/qr_scan")
                   .then((value) => addUserToContacts(value));
               //Navigator.pop(context);
@@ -225,9 +225,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
   //this method adds new contact to contacts json using its UUID
   void addUserToContacts(String uuID) async{
 
-    // var users = FirebaseFirestore.instance.collection("Users");
-    // var newUserData = users.doc(uuID).get();
-    // print(newUserData.toString());
+    //gets user data from firestore
+    var users = FirebaseFirestore.instance.collection("Users");
+    var newUserData = await users.doc(uuID).get();
+    var newUserDataMap = newUserData.data();
 
     //shows dialog "added user: USERNAME"
     showDialog<void>(
@@ -239,14 +240,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('This is a demo alert dialog.'),
-                Text('Would you like to approve of this message?'),
+                Text('Username: ${newUserDataMap["username"]}'),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Approve'),
+              child: Text('Ok'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -255,6 +255,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
         );
       },
     );
+
+    //todo: add data to json and maje contact list to read from json
+
   }
 
   //this method deletes user info from local storage and firebase Users collection

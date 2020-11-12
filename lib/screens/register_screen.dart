@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:software_engineering_project/utility/globals.dart';
+import 'package:software_engineering_project/utility/local_storage.dart';
 import 'package:uuid/uuid.dart';
 
 class RegisterScreen extends StatefulWidget {
