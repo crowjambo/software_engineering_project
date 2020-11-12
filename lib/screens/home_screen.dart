@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/message_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
 import 'package:software_engineering_project/data/chats_data.dart';
-import 'file:///C:/Users/Luke/Desktop/Software_Engineering_Project/lib/utility/globals.dart';
+import 'package:software_engineering_project/utility/globals.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:software_engineering_project/utility/qr_scanner.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -206,9 +204,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
             leading: Icon(Icons.add_circle_outline),
             onTap: () {
               //todo: implement contact add with qr codes
-              return showDialog(context: context,
-              builder: (context) { return QRScanner();});
+              Navigator.pushNamed(context, "/qr_scan")
+                  .then((value) => addUserToContacts(value));
               //Navigator.pop(context);
+
             },
           ),
           ListTile(
@@ -223,6 +222,41 @@ class _MenuDrawerState extends State<MenuDrawer> {
     );
   }
 
+  //this method adds new contact to contacts json using its UUID
+  void addUserToContacts(String uuID) async{
+
+    // var users = FirebaseFirestore.instance.collection("Users");
+    // var newUserData = users.doc(uuID).get();
+    // print(newUserData.toString());
+
+    //shows dialog "added user: USERNAME"
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('User added to Contact List'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('This is a demo alert dialog.'),
+                Text('Would you like to approve of this message?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Approve'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   //this method deletes user info from local storage and firebase Users collection
   void deleteCurrentUser() async {
     //TODO: delete user messages in local storage
@@ -234,7 +268,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     await users
         .doc(currentUUID)
         .delete()
-        .catchError((error) => print("Failed to add user: $error"));
+        .catchError((error) => print("Failed to delete user: $error"));
 
     LocalStorage.prefs.remove("currentUUID");
     LocalStorage.prefs.remove("currentUserName");

@@ -17,33 +17,18 @@ class _QRScannerState extends State<QRScanner> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            flex: 4,
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: _onQRViewCreated,
-              overlay: QrScannerOverlayShape(
-                borderColor: Colors.red,
-                borderRadius: 10,
-                borderLength: 30,
-                borderWidth: 10,
-                cutOutSize: 300,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Text('This is the result of scan: $qrText'),
-            ),
-          ),
-        ],
-      ),
-    );
+    return QRView(
+        key: qrKey,
+        onQRViewCreated: _onQRViewCreated,
+        overlay: QrScannerOverlayShape(
+          borderColor: Colors.red,
+          borderRadius: 10,
+          borderLength: 30,
+          borderWidth: 10,
+          cutOutSize: 300,
+        ),
+      );
+
   }
 
   void _onQRViewCreated(QRViewController controller) {
@@ -51,8 +36,14 @@ class _QRScannerState extends State<QRScanner> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         qrText = scanData;
+        handleScanClose();
       });
     });
+  }
+
+  void handleScanClose() {
+    controller.pauseCamera();
+    Navigator.of(context).pop(qrText);
   }
 
   @override
