@@ -7,3 +7,6 @@ const double kDefaultHeaderSize = 22.0;
 const Color kThemeColor = Colors.blue;
 const Color kAccentColor = Colors.blueAccent;
 const Color kAccentBlack = Colors.black54;
+
+// filenames
+const String kContactListJson = 'contacts.json';

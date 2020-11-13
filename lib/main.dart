@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:software_engineering_project/screens/contact_screen.dart';
 import 'package:software_engineering_project/screens/register_screen.dart';
 import './utility/qr_scanner.dart';
 import './screens/home_screen.dart';
@@ -21,7 +22,8 @@ void main() async {
     routes: <String, WidgetBuilder>{
       "/home": (BuildContext context) => HomeScreen(),
       "/register": (BuildContext context) => RegisterScreen(),
-      "/qr_scan" : (BuildContext context) => QRScanner()
+      "/qr_scan" : (BuildContext context) => QRScanner(),
+      "/contact_list": (BuildContext context) => ContactScreen()
     },
   ));
 }

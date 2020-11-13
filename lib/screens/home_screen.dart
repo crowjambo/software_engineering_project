@@ -5,6 +5,7 @@ import 'package:software_engineering_project/models/message_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
 import 'package:software_engineering_project/data/chats_data.dart';
 import 'package:software_engineering_project/utility/globals.dart';
+import 'package:software_engineering_project/utility/json_help.dart';
 import 'package:software_engineering_project/utility/local_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -197,7 +198,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
             leading: Icon(Icons.contacts_outlined),
             onTap: () {
               //todo: user screen to create new convo
-              Navigator.pop(context);
+              Navigator.pushNamed(context, "/contact_list");
+              //Navigator.pop(context);
             },
           ),
           ListTile(
@@ -207,7 +209,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
               Navigator.pushNamed(context, "/qr_scan")
                   .then((value) => addUserToContacts(value));
               //Navigator.pop(context);
-
             },
           ),
           ListTile(
@@ -223,8 +224,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   }
 
   //this method adds new contact to contacts json using its UUID
-  void addUserToContacts(String uuID) async{
-
+  void addUserToContacts(String uuID) async {
     //gets user data from firestore
     var users = FirebaseFirestore.instance.collection("Users");
     var newUserData = await users.doc(uuID).get();
@@ -255,9 +255,19 @@ class _MenuDrawerState extends State<MenuDrawer> {
         );
       },
     );
-
     //todo: add data to json and maje contact list to read from json
 
+    var jsonHelp = JsonHelper();
+    await jsonHelp.createJsonFile(kContactListJson);
+    var contactList = await jsonHelp.getJsonArray(kContactListJson);
+    // checking if contact list already contains new contact info
+    if (!contactList.contains(newUserDataMap)) {
+      //adding info and saving it to json
+      contactList.add(newUserDataMap);
+      var newJsonString = jsonHelp.returnJsonString(contactList);
+      print(newJsonString.toString());
+      jsonHelp.writeJsonStringToFile(kContactListJson, newJsonString);
+    }
   }
 
   //this method deletes user info from local storage and firebase Users collection
