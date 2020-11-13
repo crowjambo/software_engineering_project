@@ -39,9 +39,20 @@ class _ContactScreenState extends State<ContactScreen> {
         padding: EdgeInsets.all(kDefaultPadding),
         itemCount: contactData.length,
         itemBuilder: (context, i) {
-          return ListTile(
-            title: Text(contactData[i]["username"]),
+          return Card(
+            elevation: 4,
+            child: ListTile(
+              title: Text(contactData[i]["username"],
+              style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              onTap: () {
+                //todo create new chat
+                print("todo create new chat");
+              },
+            ),
           );
+
+
         });
   }
 }
