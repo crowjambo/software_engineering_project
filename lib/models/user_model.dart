@@ -1,13 +1,19 @@
 class User {
-  final int id;
-  final String name;
-  final String imageUrl;
-  final bool isOnline;
+  String userName;
+  String uuID;
+  String addedTime;
+  String lastMessage = "";
+  String lastMessageTime = "";
 
   User({
-    this.id,
-    this.name,
-    this.imageUrl,
-    this.isOnline,
+    this.userName,
+    this.uuID,
+    this.addedTime,
   });
+
+  User.fromJson(Map<String,dynamic> json){
+    this.userName = json["username"];
+    this.uuID = json["UUID"];
+    this.addedTime = json["addedTime"];
+  }
 }

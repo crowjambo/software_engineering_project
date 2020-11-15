@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/message_model.dart';
 import 'package:software_engineering_project/models/user_model.dart';
-import 'package:software_engineering_project/data/user_data.dart';
-import 'package:software_engineering_project/data/messages_data.dart';
+
 
 class ChatScreen extends StatefulWidget {
   final User user;
@@ -72,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: CircleAvatar(
                         radius: 15,
-                        backgroundImage: AssetImage(message.sender.imageUrl),
+                        backgroundImage: AssetImage('assets/images/nick-fury.jpg'), //todo: probably remove this
                       ),
                     ),
                   ],
@@ -128,7 +127,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: CircleAvatar(
                         radius: 15,
-                        backgroundImage: AssetImage(message.sender.imageUrl),
+                        backgroundImage: AssetImage('assets/images/nick-fury.jpg'), //todo: probably remove this
                       ),
                     ),
                     SizedBox(
@@ -186,66 +185,69 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     int prevUserId;
-    return Scaffold(
-      backgroundColor: Color(0xFFF6F6F6),
-      appBar: AppBar(
-        brightness: Brightness.dark,
-        centerTitle: true,
-        title: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            children: [
-              TextSpan(
-                  text: widget.user.name,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                  )),
-              TextSpan(text: '\n'),
-              widget.user.isOnline
-                  ? TextSpan(
-                      text: 'Online',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    )
-                  : TextSpan(
-                      text: 'Offline',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    )
-            ],
-          ),
-        ),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            color: Colors.white,
-            onPressed: () {
-              Navigator.pop(context);
-            }),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              reverse: true,
-              padding: EdgeInsets.all(20),
-              itemCount: messages.length,
-              itemBuilder: (BuildContext context, int index) {
-                final Message message = messages[index];
-                final bool isMe = message.sender.id == currentUser.id;
-                final bool isSameUser = prevUserId == message.sender.id;
-                prevUserId = message.sender.id;
-                return _chatBubble(message, isMe, isSameUser);
-              },
-            ),
-          ),
-          _sendMessageArea(),
-        ],
-      ),
-    );
+    return null;
+
+    //todo repair this
+    // return Scaffold(
+    //   backgroundColor: Color(0xFFF6F6F6),
+    //   appBar: AppBar(
+    //     brightness: Brightness.dark,
+    //     centerTitle: true,
+    //     title: RichText(
+    //       textAlign: TextAlign.center,
+    //       text: TextSpan(
+    //         children: [
+    //           TextSpan(
+    //               text: widget.user.name,
+    //               style: TextStyle(
+    //                 fontSize: 16,
+    //                 fontWeight: FontWeight.w400,
+    //               )),
+    //           TextSpan(text: '\n'),
+    //           widget.user.isOnline
+    //               ? TextSpan(
+    //                   text: 'Online',
+    //                   style: TextStyle(
+    //                     fontSize: 11,
+    //                     fontWeight: FontWeight.w400,
+    //                   ),
+    //                 )
+    //               : TextSpan(
+    //                   text: 'Offline',
+    //                   style: TextStyle(
+    //                     fontSize: 11,
+    //                     fontWeight: FontWeight.w400,
+    //                   ),
+    //                 )
+    //         ],
+    //       ),
+    //     ),
+    //     leading: IconButton(
+    //         icon: Icon(Icons.arrow_back_ios),
+    //         color: Colors.white,
+    //         onPressed: () {
+    //           Navigator.pop(context);
+    //         }),
+    //   ),
+    //   body: Column(
+    //     children: <Widget>[
+    //       Expanded(
+    //         child: ListView.builder(
+    //           reverse: true,
+    //           padding: EdgeInsets.all(20),
+    //           itemCount: messages.length,
+    //           itemBuilder: (BuildContext context, int index) {
+    //             final Message message = messages[index];
+    //             final bool isMe = message.sender.id == currentUser.id;
+    //             final bool isSameUser = prevUserId == message.sender.id;
+    //             prevUserId = message.sender.id;
+    //             return _chatBubble(message, isMe, isSameUser);
+    //           },
+    //         ),
+    //       ),
+    //       _sendMessageArea(),
+    //     ],
+    //   ),
+    // );
   }
 }

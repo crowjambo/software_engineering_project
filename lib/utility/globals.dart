@@ -10,3 +10,7 @@ const Color kAccentBlack = Colors.black54;
 
 // filenames
 const String kContactListJson = 'contacts.json';
+const String kActiveChatsJson = 'chats/activeChats.json';
+
+//dirs
+const String kChatDir = 'chats/';

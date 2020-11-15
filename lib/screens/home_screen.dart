@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:software_engineering_project/models/message_model.dart';
+import 'package:software_engineering_project/models/user_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
-import 'package:software_engineering_project/data/chats_data.dart';
 import 'package:software_engineering_project/utility/globals.dart';
 import 'package:software_engineering_project/utility/json_help.dart';
 import 'package:software_engineering_project/utility/local_storage.dart';
@@ -67,102 +69,114 @@ class ChatList extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatList> {
+  List<User> activeChats = List<User>();
+  var jsonHelp = JsonHelper();
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: chats.length,
-        // Builds the message and user data from message_model.dart
-        itemBuilder: (BuildContext context, int index) {
-          // With this we can call the message info
-          final Message chat = chats[index];
-          return Card(
-            elevation: 8,
-            child: GestureDetector(
-                // Opens chat scree on press
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      // This is where the user data is sent to the chat screen
-                      builder: (_) => ChatScreen(
-                        user: chat.sender,
+    return FutureBuilder<List<dynamic>>(
+        future: jsonHelp.getJsonArray(kActiveChatsJson),
+        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.hasData) {
+            return chatListWidget(snapshot.data);
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
+  }
+
+  Widget chatListWidget(List<dynamic> activeChatList) {
+    //converting activeChatList to active chat map
+    activeChats = activeChatList.map((data) => User.fromJson(data)).toList();
+    print(activeChats.toString());
+    //if active chat list is empty return info on how to create new chat
+    //todo: refine this
+    if (activeChats.isEmpty) {
+      return Center(
+        child: Text(
+          "No Active Conversations... ",
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else {
+      //if its not empty return this
+      return ListView.builder(
+          itemCount: activeChats.length,
+          // Builds the message and user data from message_model.dart
+          itemBuilder: (BuildContext context, int index) {
+            // With this we can call the message info
+            //final Message chat = chats[index];
+            return Card(
+              elevation: 8,
+              child: GestureDetector(
+                  // Opens chat scree on press
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        // This is where the user data is sent to the chat screen
+                        builder: (_) => ChatScreen(
+                          user: activeChats[index],
+                        ),
+                      )),
+                  child: Container(
+                      // Sets the padding for all elements in the container
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 15,
                       ),
-                    )),
-                child: Container(
-                    // Sets the padding for all elements in the container
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 15,
-                    ),
-                    child: Container(
-                        // This makes the with of the element 65 % of the device-width
-                        width: MediaQuery.of(context).size.width * 0.65,
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              // Assigns the content spacing
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    // For user's name
-                                    Text(
-                                      chat.sender.name,
-                                      style: TextStyle(
-                                          fontSize: kDefaultHeaderSize,
-                                          fontWeight: FontWeight.bold,
-                                          decoration: chat.unread
-                                              ? TextDecoration.underline
-                                              : null),
+                      child: Container(
+                          // This makes the with of the element 65 % of the device-width
+                          width: MediaQuery.of(context).size.width * 0.65,
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                // Assigns the content spacing
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      // For user's name
+                                      Text(
+                                        activeChats[index].userName,
+                                        style: TextStyle(
+                                            fontSize: kDefaultHeaderSize,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  // For timestamp
+                                  Text(
+                                    activeChats[index].lastMessage,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w300,
+                                      color: kAccentBlack,
                                     ),
-                                    // Container for the little grin dot beside the username
-                                    // If the user is online
-                                    chat.sender.isOnline
-                                        ? Container(
-                                            margin:
-                                                const EdgeInsets.only(left: 5),
-                                            width: 7,
-                                            height: 7,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.green,
-                                            ),
-                                          )
-                                        :
-                                        // If user if offline, the container is null
-                                        Container(
-                                            child: null,
-                                          )
-                                  ],
-                                ),
-                                // For timestamp
-                                Text(
-                                  chat.time,
+                                  )
+                                ],
+                              ),
+                              // SizedBox to make a gap between the two containers
+                              SizedBox(height: 10),
+                              // For the preview message
+                              Container(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  activeChats[index].lastMessage,
                                   style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w300,
                                     color: kAccentBlack,
                                   ),
-                                )
-                              ],
-                            ),
-                            // SizedBox to make a gap between the two containers
-                            SizedBox(height: 10),
-                            // For the preview message
-                            Container(
-                              alignment: Alignment.topLeft,
-                              child: Text(
-                                chat.text,
-                                style: TextStyle(
-                                  color: kAccentBlack,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
                                 ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
                               ),
-                            ),
-                          ],
-                        )))),
-          );
-        });
+                            ],
+                          )))),
+            );
+          });
+    }
   }
 }
 
@@ -188,7 +202,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: Text(userName),
+            child: Text(
+              userName,
+              style: TextStyle(fontSize: kDefaultHeaderSize * 1.5),
+            ),
             decoration: BoxDecoration(
               color: Colors.blue,
             ),
