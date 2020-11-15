@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:software_engineering_project/models/user_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
+import 'package:software_engineering_project/utility/file_sys_help.dart';
 import 'package:software_engineering_project/utility/globals.dart';
 import 'package:software_engineering_project/utility/json_help.dart';
 import 'package:software_engineering_project/utility/local_storage.dart';
@@ -269,7 +272,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
         );
       },
     );
-    //todo: add data to json and maje contact list to read from json
 
     var jsonHelp = JsonHelper();
     await jsonHelp.createJsonFile(kContactListJson);
@@ -286,8 +288,14 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   //this method deletes user info from local storage and firebase Users collection
   void deleteCurrentUser() async {
-    //TODO: delete user messages in local storage
+    //deleting everything from local storage
+    var fileSysHelp = FileSystemHelper();
+    var chatDir = Directory(await fileSysHelp.getDirPath(kChatDir));
+    var contactFile = File(await fileSysHelp.getFilePath(kContactListJson));
+    if(chatDir.existsSync()){await chatDir.delete(recursive: true);}
+    if(contactFile.existsSync()){await contactFile.delete(recursive: true);}
 
+    //deleting user from firestore
     LocalStorage.init();
     var currentUUID = LocalStorage.prefs.getString("currentUUID");
 
