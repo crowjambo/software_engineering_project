@@ -27,10 +27,10 @@ class _ContactScreenState extends State<ContactScreen> {
             if (snapshot.hasData) {
               return buildContactList(snapshot.data);
             } else if (snapshot.hasError) {
-              print("error");
-              return CircularProgressIndicator();
+              print("error at contacts list future");
+              return Center(child: Text("No Contacts Yet..."));
             } else {
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             }
           },
         ));
@@ -72,6 +72,8 @@ class _ContactScreenState extends State<ContactScreen> {
       await contactChatDir.delete(recursive: true);
     }
     await contactChatDir.create(recursive: true);
+    await jsonHelp
+        .createJsonFile(kChatDir + contactData["UUID"] + "/messages.json");
 
     //adding user info to active chats json file
     var activeChatsJson = File(await fileSysHelp.getFilePath(kActiveChatsJson));

@@ -72,6 +72,12 @@ class _ChatListState extends State<ChatList> {
   List<User> activeChats = List<User>();
   var jsonHelp = JsonHelper();
 
+  Future<Null> _refresh() {
+    return Future.delayed(const Duration(milliseconds: 1)).then((_user) {
+      setState(() => {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<dynamic>>(
@@ -80,7 +86,7 @@ class _ChatListState extends State<ChatList> {
           if (snapshot.hasData) {
             return chatListWidget(snapshot.data);
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Center(child: Text("No Conversation Yet..."));
           } else {
             return Center(child: CircularProgressIndicator());
           }
@@ -110,7 +116,7 @@ class _ChatListState extends State<ChatList> {
             //final Message chat = chats[index];
             return Card(
               elevation: 8,
-              child: GestureDetector(
+              child: InkWell(
                   // Opens chat scree on press
                   onTap: () => Navigator.push(
                       context,
@@ -223,8 +229,11 @@ class _MenuDrawerState extends State<MenuDrawer> {
             title: Text("Add Contact"),
             leading: Icon(Icons.add_circle_outline),
             onTap: () {
-              Navigator.pushNamed(context, "/qr_scan")
-                  .then((value) => addUserToContacts(value));
+              Navigator.pushNamed(context, "/qr_scan").then((value) {
+                if (value != null) {
+                  addUserToContacts(value);
+                }
+              });
               //Navigator.pop(context);
             },
           ),
@@ -292,8 +301,12 @@ class _MenuDrawerState extends State<MenuDrawer> {
     var fileSysHelp = FileSystemHelper();
     var chatDir = Directory(await fileSysHelp.getDirPath(kChatDir));
     var contactFile = File(await fileSysHelp.getFilePath(kContactListJson));
-    if(chatDir.existsSync()){await chatDir.delete(recursive: true);}
-    if(contactFile.existsSync()){await contactFile.delete(recursive: true);}
+    if (chatDir.existsSync()) {
+      await chatDir.delete(recursive: true);
+    }
+    if (contactFile.existsSync()) {
+      await contactFile.delete(recursive: true);
+    }
 
     //deleting user from firestore
     LocalStorage.init();
