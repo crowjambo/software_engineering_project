@@ -1,20 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/message_model.dart';
 import 'package:software_engineering_project/models/user_model.dart';
+import 'package:software_engineering_project/utility/file_sys_help.dart';
 import 'package:software_engineering_project/utility/globals.dart';
-
+import 'package:software_engineering_project/utility/json_help.dart';
 
 class ChatScreen extends StatefulWidget {
-  final User user;
+  final User senderData;
 
-  ChatScreen({this.user});
+  ChatScreen({this.senderData});
 
   @override
-  _ChatScreenState createState() => _ChatScreenState();
+  _ChatScreenState createState() => _ChatScreenState(senderData);
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  _chatBubble(Message message, bool isMe, bool isSameUser) {
+  _ChatScreenState(this.senderData) {
+    this.jsonHelp = JsonHelper();
+    this.fileSysHelp = FileSystemHelper();
+    this.messageFilePath = kChatDir + senderData.uuID + kMessageFile;
+  }
+
+  var jsonHelp;
+  var fileSysHelp;
+  User senderData;
+  String messageFilePath;
+  List<dynamic> messageList;
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: kThemeColor,
+        appBar: AppBar(
+          brightness: Brightness.dark,
+          centerTitle: true,
+          title: Text(senderData.userName,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: kDefaultHeaderSize,
+                fontWeight: FontWeight.bold,
+              )),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back_ios),
+              color: Colors.white,
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+        ),
+        body: chatAreaFutureBuilder());
+  }
+
+  Widget _chatBubble(Message message, bool isMe, bool isSameUser) {
     if (isMe) {
       return Column(
         children: <Widget>[
@@ -50,7 +88,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      message.time,
+                      message.sentTime,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black45,
@@ -72,7 +110,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: CircleAvatar(
                         radius: 15,
-                        backgroundImage: AssetImage('assets/images/nick-fury.jpg'), //todo: probably remove this
+                        backgroundImage: AssetImage(
+                            'assets/images/nick-fury.jpg'), //todo: probably remove this
                       ),
                     ),
                   ],
@@ -128,14 +167,15 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: CircleAvatar(
                         radius: 15,
-                        backgroundImage: AssetImage('assets/images/nick-fury.jpg'), //todo: probably remove this
+                        backgroundImage: AssetImage(
+                            'assets/images/nick-fury.jpg'), //todo: probably remove this
                       ),
                     ),
                     SizedBox(
                       width: 10,
                     ),
                     Text(
-                      message.time,
+                      message.sentTime,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.black45,
@@ -151,19 +191,13 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  _sendMessageArea() {
+  Widget _sendMessageArea() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8),
       height: 70,
-      color: Colors.white,
+      color: kAccentColor,
       child: Row(
         children: <Widget>[
-          IconButton(
-            icon: Icon(Icons.photo),
-            iconSize: 25,
-            color: Theme.of(context).primaryColor,
-            onPressed: () {},
-          ),
           Expanded(
             child: TextField(
               decoration: InputDecoration.collapsed(
@@ -183,54 +217,54 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    int prevUserId;
+  Widget chatAreaFutureBuilder() {
+    return FutureBuilder<List<dynamic>>(
+        future: jsonHelp.getJsonArray(this.messageFilePath),
+        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.hasData) {
+            return chatArea(snapshot.data);
+          } else if (snapshot.hasError) {
+            return Center(
+                child: Text("No Conversation Yet... (._.)\n${snapshot.error}"));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
+  }
 
-    return Scaffold(
-      backgroundColor: Color(0xFFF6F6F6),
-      appBar: AppBar(
-        brightness: Brightness.dark,
-        centerTitle: true,
-        title: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            children: [
-              TextSpan(
-                  text: widget.user.userName,
-                  style: TextStyle(
-                    fontSize: kDefaultHeaderSize,
-                    fontWeight: FontWeight.bold,
-                  ))
-            ],
-          ),
-        ),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            color: Colors.white,
-            onPressed: () {
-              Navigator.pop(context);
-            }),
-      ),
-      body: Column(
+  Widget chatArea(List<dynamic> messages) {
+    if (messages.isEmpty) {
+      return Column(
         children: <Widget>[
-          Expanded(child: Text("sa")
-            // child: ListView.builder(
-            //   reverse: true,
-            //   padding: EdgeInsets.all(20),
-            //   itemCount: messages.length,
-            //   itemBuilder: (BuildContext context, int index) {
-            //     final Message message = messages[index];
-            //     final bool isMe = message.sender.id == currentUser.id;
-            //     final bool isSameUser = prevUserId == message.sender.id;
-            //     prevUserId = message.sender.id;
-            //     return _chatBubble(message, isMe, isSameUser);
-            //   },
-            // ),
+          Expanded(
+            child: Container(
+                color: Colors.white,
+                child: Center(child: Text("No Conversation Yet..."))),
           ),
           _sendMessageArea(),
         ],
-      ),
-    );
+      );
+    }else{
+      return Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              reverse: true,
+              padding: EdgeInsets.all(20),
+              itemCount: messages.length,
+              itemBuilder: (BuildContext context, int index) {
+                final Message message = messages[index];
+                final bool isMe = message.sender.id == currentUser.id;
+                final bool isSameUser = prevUserId == message.sender.id;
+                prevUserId = message.sender.id;
+                return _chatBubble(message, isMe, isSameUser);
+              },
+            ),
+          ),
+          _sendMessageArea(),
+        ],
+      );
+    }
+
   }
 }

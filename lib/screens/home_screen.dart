@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/user_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
 import 'package:software_engineering_project/utility/file_sys_help.dart';
-import 'package:software_engineering_project/utility/globals.dart';
+import 'package:software_engineering_project/utility/globals.dart' as globals;
 import 'package:software_engineering_project/utility/json_help.dart';
 import 'package:software_engineering_project/utility/local_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
           elevation: 8,
           title: Text(
             'Inbox',
-            style: TextStyle(fontSize: kDefaultHeaderSize),
+            style: TextStyle(fontSize: globals.kDefaultHeaderSize),
           ),
           actions: [
             IconButton(
@@ -40,7 +40,7 @@ class HomeScreen extends StatelessWidget {
         builder: (context) {
           return Dialog(
             child: Container(
-                padding: const EdgeInsets.all(kDefaultPadding),
+                padding: const EdgeInsets.all(globals.kDefaultPadding),
                 child: QrImage(
                   data: currentUUID,
                   version: QrVersions.auto,
@@ -72,21 +72,17 @@ class _ChatListState extends State<ChatList> {
   List<User> activeChats = List<User>();
   var jsonHelp = JsonHelper();
 
-  Future<Null> _refresh() {
-    return Future.delayed(const Duration(milliseconds: 1)).then((_user) {
-      setState(() => {});
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<dynamic>>(
-        future: jsonHelp.getJsonArray(kActiveChatsJson),
+        future: jsonHelp.getJsonArray(globals.kActiveChatsJson),
         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
           if (snapshot.hasData) {
             return chatListWidget(snapshot.data);
           } else if (snapshot.hasError) {
-            return Center(child: Text("No Conversation Yet..."));
+            return Center(
+                child: Text(
+                    "No Conversations Yet...\n Try Adding Some Contacts."));
           } else {
             return Center(child: CircularProgressIndicator());
           }
@@ -123,7 +119,7 @@ class _ChatListState extends State<ChatList> {
                       MaterialPageRoute(
                         // This is where the user data is sent to the chat screen
                         builder: (_) => ChatScreen(
-                          user: activeChats[index],
+                          senderData: activeChats[index],
                         ),
                       )),
                   child: Container(
@@ -148,7 +144,7 @@ class _ChatListState extends State<ChatList> {
                                       Text(
                                         activeChats[index].userName,
                                         style: TextStyle(
-                                            fontSize: kDefaultHeaderSize,
+                                            fontSize: globals.kDefaultHeaderSize,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -159,7 +155,7 @@ class _ChatListState extends State<ChatList> {
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w300,
-                                      color: kAccentBlack,
+                                      color: globals.kAccentBlack,
                                     ),
                                   )
                                 ],
@@ -172,7 +168,7 @@ class _ChatListState extends State<ChatList> {
                                 child: Text(
                                   activeChats[index].lastMessage,
                                   style: TextStyle(
-                                    color: kAccentBlack,
+                                    color: globals.kAccentBlack,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
@@ -193,12 +189,6 @@ class MenuDrawer extends StatefulWidget {
 }
 
 class _MenuDrawerState extends State<MenuDrawer> {
-  _MenuDrawerState() {
-    LocalStorage.init();
-  }
-
-  var userName =
-      LocalStorage.prefs.getString("currentUserName") ?? "hate this bug";
 
   @override
   Widget build(BuildContext context) {
@@ -209,8 +199,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
         children: <Widget>[
           DrawerHeader(
             child: Text(
-              userName,
-              style: TextStyle(fontSize: kDefaultHeaderSize * 1.5),
+              globals.userName,
+              style: TextStyle(fontSize: globals.kDefaultHeaderSize * 1.5),
             ),
             decoration: BoxDecoration(
               color: Colors.blue,
@@ -283,15 +273,15 @@ class _MenuDrawerState extends State<MenuDrawer> {
     );
 
     var jsonHelp = JsonHelper();
-    await jsonHelp.createJsonFile(kContactListJson);
-    var contactList = await jsonHelp.getJsonArray(kContactListJson);
+    await jsonHelp.createJsonFile(globals.kContactListJson);
+    var contactList = await jsonHelp.getJsonArray(globals.kContactListJson);
     // checking if contact list already contains new contact info
     if (!contactList.contains(newUserDataMap)) {
       //adding info and saving it to json
       contactList.add(newUserDataMap);
       var newJsonString = jsonHelp.returnJsonString(contactList);
       print(newJsonString.toString());
-      jsonHelp.writeJsonStringToFile(kContactListJson, newJsonString);
+      jsonHelp.writeJsonStringToFile(globals.kContactListJson, newJsonString);
     }
   }
 
@@ -299,8 +289,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
   void deleteCurrentUser() async {
     //deleting everything from local storage
     var fileSysHelp = FileSystemHelper();
-    var chatDir = Directory(await fileSysHelp.getDirPath(kChatDir));
-    var contactFile = File(await fileSysHelp.getFilePath(kContactListJson));
+    var chatDir = Directory(await fileSysHelp.getDirPath(globals.kChatDir));
+    var contactFile = File(await fileSysHelp.getFilePath(globals.kContactListJson));
     if (chatDir.existsSync()) {
       await chatDir.delete(recursive: true);
     }

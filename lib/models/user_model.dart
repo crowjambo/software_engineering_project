@@ -16,4 +16,12 @@ class User {
     this.uuID = json["UUID"];
     this.addedTime = json["addedTime"];
   }
+
+  Map<String, dynamic> toJson() =>
+      {
+        'username': userName,
+        'UUID': uuID,
+        'addedTime': addedTime
+      };
+
 }

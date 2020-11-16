@@ -5,6 +5,7 @@ import './utility/qr_scanner.dart';
 import './screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:software_engineering_project/utility/local_storage.dart';
+import 'package:software_engineering_project/utility/globals.dart' as globals;
 
 void main() async {
   //doing some firebase stuff im yet to understand
@@ -45,6 +46,7 @@ Future<bool> currentUserExists() async {
   await LocalStorage.init();
   print(LocalStorage.prefs.toString());
   userReg = LocalStorage.prefs.getBool("userRegistered") ?? false;
-  print(userReg);
+  globals.userName = LocalStorage.prefs.getString("currentUserName");
+  globals.userUUID = LocalStorage.prefs.getString("currentUUID");
   return userReg;
 }
