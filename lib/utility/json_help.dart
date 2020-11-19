@@ -4,7 +4,7 @@ import 'package:path_provider/path_provider.dart';
 
 class JsonHelper {
   List<dynamic> decodedJsonArray;
-  final String placeholderJsonString = "{\"array\": []}";
+  final String _placeholderJsonString = "{\"array\": []}";
 
   Future createJsonFile(String filename) async {
     //returns if file with given username already exists
@@ -14,7 +14,7 @@ class JsonHelper {
       //creates the file
       File newJsonFile = File(await _localFile(filename));
       newJsonFile.createSync();
-      newJsonFile.writeAsStringSync(placeholderJsonString);
+      newJsonFile.writeAsStringSync(_placeholderJsonString);
     }
   }
 
@@ -24,7 +24,7 @@ class JsonHelper {
     var newFilename = await _localFile(filename);
     File newJsonFile = File(newFilename);
     await newJsonFile.create();
-    newJsonFile.writeAsStringSync(placeholderJsonString);
+    newJsonFile.writeAsStringSync(_placeholderJsonString);
   }
 
   Future<List<dynamic>> getJsonArray(String filename) async {

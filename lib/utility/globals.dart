@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:software_engineering_project/models/user_model.dart';
+import 'package:software_engineering_project/models/message_model.dart';
+
+//init message
+Message initMessage = Message(currentUser, "toUUID", "0", "Init");
 
 //user UUID and username
-String userUUID;
-String userName;
+User currentUser;
 
 // constants
 const double kDefaultPadding = 16.0;

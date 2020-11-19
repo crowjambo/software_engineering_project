@@ -5,11 +5,11 @@ class User {
   String lastMessage = "";
   String lastMessageTime = "";
 
-  User({
-    this.userName,
-    this.uuID,
-    this.addedTime,
-  });
+  User(String userName, String uuID, String addedTime){
+    this.userName = userName;
+    this.uuID = uuID;
+    this.addedTime = addedTime;
+  }
 
   User.fromJson(Map<String,dynamic> json){
     this.userName = json["username"];

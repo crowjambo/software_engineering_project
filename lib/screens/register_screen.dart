@@ -67,9 +67,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           "username": userName,
           "UUID": uuid,
           "addedTime" : DateTime.now().toString()
+          
         })
         .then((value) => print("user added uuid: " + uuid))
         .catchError((error) => print("Failed to add user: $error"));
+    //creating message collection
+    users.doc(uuid).collection("messages").doc("activeChats").set({
+      'init': "init",
+    });
+    
     //saving username andUUID to local storage
     await LocalStorage.init();
     LocalStorage.prefs.setString("currentUUID", uuid);

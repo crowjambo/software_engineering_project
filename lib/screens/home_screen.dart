@@ -82,7 +82,7 @@ class _ChatListState extends State<ChatList> {
           } else if (snapshot.hasError) {
             return Center(
                 child: Text(
-                    "No Conversations Yet...\n Try Adding Some Contacts."));
+                    "No Conversations Yet...\nTry Adding Some Contacts."));
           } else {
             return Center(child: CircularProgressIndicator());
           }
@@ -94,7 +94,6 @@ class _ChatListState extends State<ChatList> {
     activeChats = activeChatList.map((data) => User.fromJson(data)).toList();
     print(activeChats.toString());
     //if active chat list is empty return info on how to create new chat
-    //todo: refine this
     if (activeChats.isEmpty) {
       return Center(
         child: Text(
@@ -199,7 +198,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
         children: <Widget>[
           DrawerHeader(
             child: Text(
-              globals.userName,
+              globals.currentUser.userName,
               style: TextStyle(fontSize: globals.kDefaultHeaderSize * 1.5),
             ),
             decoration: BoxDecoration(
@@ -210,7 +209,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
             title: Text("Contacts"),
             leading: Icon(Icons.contacts_outlined),
             onTap: () {
-              //todo: user screen to create new convo
               Navigator.pushNamed(context, "/contact_list");
               //Navigator.pop(context);
             },

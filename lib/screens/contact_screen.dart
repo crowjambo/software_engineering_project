@@ -1,7 +1,8 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:software_engineering_project/utility/globals.dart';
+import 'package:software_engineering_project/utility/globals.dart' as globals;
 import 'package:software_engineering_project/utility/json_help.dart';
 import 'package:software_engineering_project/utility/file_sys_help.dart';
 
@@ -22,7 +23,7 @@ class _ContactScreenState extends State<ContactScreen> {
           title: Text("Contact List"),
         ),
         body: FutureBuilder<List<dynamic>>(
-          future: jsonHelp.getJsonArray(kContactListJson),
+          future: jsonHelp.getJsonArray(globals.kContactListJson),
           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
             if (snapshot.hasData) {
               return buildContactList(snapshot.data);
@@ -38,7 +39,7 @@ class _ContactScreenState extends State<ContactScreen> {
 
   Widget buildContactList(List<dynamic> contactData) {
     return ListView.builder(
-        padding: EdgeInsets.all(kDefaultPadding),
+        padding: EdgeInsets.all(globals.kDefaultPadding),
         itemCount: contactData.length,
         itemBuilder: (context, i) {
           return Card(
@@ -47,10 +48,10 @@ class _ContactScreenState extends State<ContactScreen> {
               title: Text(
                 contactData[i]["username"],
                 style: TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: kDefaultHeaderSize),
+                    fontWeight: FontWeight.bold,
+                    fontSize: globals.kDefaultHeaderSize),
               ),
               onTap: () {
-                //todo create new chat
                 createNewChat(contactData[i]);
                 Navigator.pushReplacementNamed(context, "/home");
                 //Navigator.popUntil(context, ModalRoute.withName("/home"));
@@ -63,8 +64,9 @@ class _ContactScreenState extends State<ContactScreen> {
   void createNewChat(dynamic contactData) async {
     var fileSysHelp = FileSystemHelper();
     var jsonHelp = JsonHelper();
-    var contactChatDirPath =
-        await fileSysHelp.getDirPath(kChatDir) + contactData["UUID"] + '/';
+    var contactChatDirPath = await fileSysHelp.getDirPath(globals.kChatDir) +
+        contactData["UUID"] +
+        '/';
     var contactChatDir = Directory(contactChatDirPath);
 
     //creating directory to save new chats, deleting it if it already exists
@@ -72,19 +74,20 @@ class _ContactScreenState extends State<ContactScreen> {
       await contactChatDir.delete(recursive: true);
     }
     await contactChatDir.create(recursive: true);
-    await jsonHelp
-        .createJsonFile(kChatDir + contactData["UUID"] + "/messages.json");
+    await jsonHelp.createJsonFile(
+        globals.kChatDir + contactData["UUID"] + "/messages.json");
 
     //adding user info to active chats json file
-    var activeChatsJson = File(await fileSysHelp.getFilePath(kActiveChatsJson));
+    var activeChatsJson =
+        File(await fileSysHelp.getFilePath(globals.kActiveChatsJson));
 
     //creating file if it doesn't exist
     if (!activeChatsJson.existsSync()) {
-      await jsonHelp.createJsonFile(kActiveChatsJson);
+      await jsonHelp.createJsonFile(globals.kActiveChatsJson);
     }
 
     // getting active chats info to list
-    var activeChatsList = await jsonHelp.getJsonArray(kActiveChatsJson);
+    var activeChatsList = await jsonHelp.getJsonArray(globals.kActiveChatsJson);
 
     //if active chat list already contains contact data remove it
     activeChatsList
@@ -96,6 +99,20 @@ class _ContactScreenState extends State<ContactScreen> {
         jsonHelp.returnJsonString(activeChatsList);
     print(updatedActiveChatsJsonString);
     jsonHelp.writeJsonStringToFile(
-        kActiveChatsJson, updatedActiveChatsJsonString);
+        globals.kActiveChatsJson, updatedActiveChatsJsonString);
+
+    // //creating folder in sender collection
+    // FirebaseFirestore.instance
+    //     .collection("Users")
+    //     .doc(globals.currentUser.uuID)
+    //     .collection("messages")
+    //     .doc("activeChats").collection(contactData["UUID"]).add(Map<String, dynamic>());
+    //
+    // //creating folder in receiver collection
+    // FirebaseFirestore.instance
+    //     .collection("Users")
+    //     .doc(contactData["UUID"])
+    //     .collection("messages")
+    //     .doc("activeChats").collection(globals.currentUser.uuID).add(Map<String, dynamic>());
   }
 }

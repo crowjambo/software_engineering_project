@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:software_engineering_project/models/user_model.dart';
 import 'package:software_engineering_project/screens/contact_screen.dart';
 import 'package:software_engineering_project/screens/register_screen.dart';
 import './utility/qr_scanner.dart';
@@ -23,7 +24,7 @@ void main() async {
     routes: <String, WidgetBuilder>{
       "/home": (BuildContext context) => HomeScreen(),
       "/register": (BuildContext context) => RegisterScreen(),
-      "/qr_scan" : (BuildContext context) => QRScanner(),
+      "/qr_scan": (BuildContext context) => QRScanner(),
       "/contact_list": (BuildContext context) => ContactScreen()
     },
   ));
@@ -46,7 +47,7 @@ Future<bool> currentUserExists() async {
   await LocalStorage.init();
   print(LocalStorage.prefs.toString());
   userReg = LocalStorage.prefs.getBool("userRegistered") ?? false;
-  globals.userName = LocalStorage.prefs.getString("currentUserName");
-  globals.userUUID = LocalStorage.prefs.getString("currentUUID");
+  globals.currentUser = User(LocalStorage.prefs.getString("currentUserName"),
+      LocalStorage.prefs.getString("currentUUID"), "Time IDK");
   return userReg;
 }
