@@ -71,28 +71,67 @@ class ChatList extends StatefulWidget {
 class _ChatListState extends State<ChatList> {
   List<User> activeChats = List<User>();
   var jsonHelp = JsonHelper();
+  var activeChatListFirebase = FirebaseFirestore.instance
+      .collection("Users")
+      .doc(globals.currentUser.uuID)
+      .collection("messages")
+      .doc("activeChats")
+      .snapshots();
+  QuerySnapshot usersCollection;
+
+  Future getContacts() async {
+    var contacts = await FirebaseFirestore.instance
+        .collection("Users").get();
+    setState(() {
+      usersCollection = contacts;
+    });
+  }
+
+  @override
+  void initState() {
+    getContacts();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
-        future: jsonHelp.getJsonArray(globals.kActiveChatsJson),
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+
+    return StreamBuilder<DocumentSnapshot>(
+        stream: activeChatListFirebase,
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {
-            return chatListWidget(snapshot.data);
+            return chatListBuilder(snapshot.data);
           } else if (snapshot.hasError) {
             return Center(
-                child: Text(
-                    "No Conversations Yet...\nTry Adding Some Contacts."));
+                child:
+                    Text("No Conversations Yet...\nTry Adding Some Contacts."));
           } else {
             return Center(child: CircularProgressIndicator());
           }
         });
   }
 
-  Widget chatListWidget(List<dynamic> activeChatList) {
+  Widget chatListBuilder(DocumentSnapshot activeChatList) {
+    var usersList = usersCollection.docs.map((e) => e.data()).toList();
+    activeChats.clear();
     //converting activeChatList to active chat map
-    activeChats = activeChatList.map((data) => User.fromJson(data)).toList();
-    print(activeChats.toString());
+    var activeChatUUIDList = activeChatList.data().keys.toList();
+    activeChatUUIDList.removeWhere((element) => element == "init");
+    usersList.retainWhere((element) => activeChatUUIDList.contains(element["UUID"]));
+    //convert to user list
+    usersList.forEach((element) {activeChats.add(User.fromJson(element));});
+
+    //activeChats = usersCollection.docs.map((e) => User.fromJson(e.data()));
+
+    return chatListWidget();
+
+    //activeChats = activeChatList.map((data) => User.fromJson(data)).toList();
+    //print(activeChats.toString());
+  }
+
+  Widget chatListWidget() {
+
     //if active chat list is empty return info on how to create new chat
     if (activeChats.isEmpty) {
       return Center(
@@ -143,7 +182,8 @@ class _ChatListState extends State<ChatList> {
                                       Text(
                                         activeChats[index].userName,
                                         style: TextStyle(
-                                            fontSize: globals.kDefaultHeaderSize,
+                                            fontSize:
+                                                globals.kDefaultHeaderSize,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],
@@ -188,7 +228,6 @@ class MenuDrawer extends StatefulWidget {
 }
 
 class _MenuDrawerState extends State<MenuDrawer> {
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -288,7 +327,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
     //deleting everything from local storage
     var fileSysHelp = FileSystemHelper();
     var chatDir = Directory(await fileSysHelp.getDirPath(globals.kChatDir));
-    var contactFile = File(await fileSysHelp.getFilePath(globals.kContactListJson));
+    var contactFile =
+        File(await fileSysHelp.getFilePath(globals.kContactListJson));
     if (chatDir.existsSync()) {
       await chatDir.delete(recursive: true);
     }
@@ -310,5 +350,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
     LocalStorage.prefs.remove("currentUserName");
     LocalStorage.prefs.setBool("userRegistered", false);
     Navigator.of(context).pushReplacementNamed("/register");
+
+
+    setState(() {
+      print("update after setstate");
+    });
   }
 }

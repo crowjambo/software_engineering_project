@@ -100,12 +100,13 @@ class _ChatScreenState extends State<ChatScreen> {
               icon: Icon(Icons.arrow_back_ios),
               color: Colors.white,
               onPressed: () {
-                //todo: save all messages when exiting
-                Navigator.pop(context);
+                saveMessageListToJson();
+                Navigator.pushReplacementNamed(context, "/home");
               }),
         ),
         body: chatAreaStreamBuilder());
   }
+
 
   Widget _chatBubble(Message message, bool isMe, bool isSameUser) {
     if (isMe) {
@@ -239,9 +240,8 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  //todo do this
   Widget chatAreaStreamBuilder() {
-    return new StreamBuilder<QuerySnapshot>(
+    return StreamBuilder<QuerySnapshot>(
         stream: senderMessagesStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           return chatArea(snapshot.data);
@@ -250,7 +250,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget chatArea(QuerySnapshot messagesFF) {
     List<Message> messages = List<Message>();
-    messages.addAll(messagesFromJsonList);
+    if(messagesFromJsonList != null) messages.addAll(messagesFromJsonList);
     messages.addAll(
         messagesFF.docs.map((e) => Message.fromJson(e.data())).toList());
     print(messagesFF.docs.length);
@@ -296,11 +296,32 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  void saveMessageListToJson() async{
+      List<Map<String,dynamic>> messageList = List<Map<String,dynamic>>();
+
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(globals.currentUser.uuID)
+          .collection("messages")
+          .doc("activeChats")
+          .collection(receiverData.uuID).orderBy("sentTime").get().then((firestoreMessages) {
+        if(messagesFromJsonList != null)
+        {messageList.addAll(messagesFromJsonList.map((e) => e.toJson()).toList());}
+        messageList.addAll(firestoreMessages.docs.map((e) => e.data()));
+        var messageListJson = jsonHelp.returnJsonString(messageList);
+        print(messageListJson);
+        print(messageList.length);
+        jsonHelp.writeJsonStringToFile(messageFilePath, messageListJson);
+        //deleting all messages in firestore
+        firestoreMessages.docs.forEach((element) {element.reference.delete();});
+      });
+  }
+
+
   void sendMessage(String messageText) async {
     if (messageText.isEmpty) return;
     var message = Message(globals.currentUser, receiverData.uuID,
         DateTime.now().millisecondsSinceEpoch.toString(), messageText);
-    //this.messagesFromJsonList.add(message);
 
     //sending message to firestore
     senderMessagesFS.add(message.toJson());

@@ -101,18 +101,20 @@ class _ContactScreenState extends State<ContactScreen> {
     jsonHelp.writeJsonStringToFile(
         globals.kActiveChatsJson, updatedActiveChatsJsonString);
 
-    // //creating folder in sender collection
-    // FirebaseFirestore.instance
-    //     .collection("Users")
-    //     .doc(globals.currentUser.uuID)
-    //     .collection("messages")
-    //     .doc("activeChats").collection(contactData["UUID"]).add(Map<String, dynamic>());
-    //
-    // //creating folder in receiver collection
-    // FirebaseFirestore.instance
-    //     .collection("Users")
-    //     .doc(contactData["UUID"])
-    //     .collection("messages")
-    //     .doc("activeChats").collection(globals.currentUser.uuID).add(Map<String, dynamic>());
+    //adding chat info in firestore
+    var activeChatListFirebaseSender = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(globals.currentUser.uuID)
+        .collection("messages")
+        .doc("activeChats")
+        .set({contactData["UUID"]: contactData["UUID"]},
+            SetOptions(merge: true));
+    var activeChatListFirebaseReceiver = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(contactData["UUID"])
+        .collection("messages")
+        .doc("activeChats")
+        .set({globals.currentUser.uuID: globals.currentUser.uuID},
+            SetOptions(merge: true));
   }
 }
