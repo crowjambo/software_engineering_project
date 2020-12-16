@@ -38,6 +38,8 @@ class HomeScreen extends StatelessWidget {
     LocalStorage.init();
     var currentUUID = LocalStorage.prefs.getString("currentUserName");
 
+    print("QR ${currentUUID}");
+
     return showDialog(
         context: context,
         builder: (context) {
