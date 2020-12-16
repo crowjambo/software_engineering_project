@@ -237,7 +237,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
         children: <Widget>[
           DrawerHeader(
             child: Text(
-              globals.currentUser.userName,
+              LocalStorage.prefs.getString("currentUserName"),
               style: TextStyle(fontSize: globals.kDefaultHeaderSize * 1.5),
             ),
             decoration: BoxDecoration(
