@@ -27,6 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Padding(
               padding: EdgeInsets.all(kDefaultPadding),
               child: TextField(
+                key: Key("userNameInput"),
                 controller: userNameTextController,
                 decoration: InputDecoration(hintText: "UserName"),
                 style: TextStyle(
@@ -36,6 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Padding(
               padding: EdgeInsets.all(kDefaultPadding),
               child: RaisedButton(
+                  key: Key("createNewIdentity"),
                   color: kAccentColor,
                   child: Text("Create New Identity"),
                   onPressed: () {
@@ -66,8 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         .set({
           "username": userName,
           "UUID": uuid,
-          "addedTime" : DateTime.now().toString()
-          
+          "addedTime": DateTime.now().toString()
         })
         .then((value) => print("user added uuid: " + uuid))
         .catchError((error) => print("Failed to add user: $error"));
@@ -75,7 +76,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     users.doc(uuid).collection("messages").doc("activeChats").set({
       'init': "init",
     });
-    
+
     //saving username andUUID to local storage
     await LocalStorage.init();
     LocalStorage.prefs.setString("currentUUID", uuid);
