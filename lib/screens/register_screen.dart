@@ -62,7 +62,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     //Generating RSA KEYS
     var keyPar = CryptoUtils.generateRSAKeyPair();
-    var privateKeyString = CryptoUtils.encodeRSAPrivateKeyToPem(keyPar.privateKey);
+    var privateKeyString =
+        CryptoUtils.encodeRSAPrivateKeyToPem(keyPar.privateKey);
     var publicKeyString = CryptoUtils.encodeRSAPublicKeyToPem(keyPar.publicKey);
 
     //sending username and UUID to firebase storage
@@ -71,9 +72,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         .set({
           "username": userName,
           "UUID": uuid,
-          "addedTime" : DateTime.now().toString(),
-          "RSA_public_key" : publicKeyString
-          
+          "addedTime": DateTime.now().toString(),
+          "RSA_public_key": publicKeyString,
         })
         .then((value) => print("user added uuid: " + uuid))
         .catchError((error) => print("Failed to add user: $error"));
@@ -87,6 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     LocalStorage.prefs.setString("currentUUID", uuid);
     LocalStorage.prefs.setString("currentUserName", userName);
     LocalStorage.prefs.setString("RSA_private_key", privateKeyString);
+    LocalStorage.prefs.setString("RSA_public_key", publicKeyString);
     LocalStorage.prefs.setBool("userRegistered", true);
   }
 

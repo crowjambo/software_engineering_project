@@ -12,10 +12,12 @@ import 'package:software_engineering_project/utility/local_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
 
-
-
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,18 +29,23 @@ class HomeScreen extends StatelessWidget {
           ),
           actions: [
             IconButton(
-                icon: Icon(Icons.share), onPressed: () => {showQRCode(context)})
+                icon: Icon(Icons.share), onPressed: () => {showQRCode(context)}),
+            IconButton(icon: Icon(Icons.refresh), onPressed: refreshScreen)
           ],
         ),
         body: ChatList(),
         drawer: MenuDrawer());
   }
 
+  void refreshScreen(){
+    setState(() {
+      print("refreshing screen");
+    });
+  }
+
   Future showQRCode(BuildContext context) {
     LocalStorage.init();
-    var currentUUID = LocalStorage.prefs.getString("currentUserName");
-
-    print("QR ${currentUUID}");
+    var currentUUID = LocalStorage.prefs.getString("currentUUID");
 
     return showDialog(
         context: context,
