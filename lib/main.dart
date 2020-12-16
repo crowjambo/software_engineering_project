@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:software_engineering_project/models/user_model.dart';
 import 'package:software_engineering_project/screens/contact_screen.dart';
 import 'package:software_engineering_project/screens/register_screen.dart';
@@ -8,10 +9,19 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:software_engineering_project/utility/local_storage.dart';
 import 'package:software_engineering_project/utility/globals.dart' as globals;
 
+
 void main() async {
   //doing some firebase stuff im yet to understand
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  ErrorWidget.builder = (FlutterErrorDetails details) => Center(
+        child: CircularProgressIndicator(
+            valueColor: new AlwaysStoppedAnimation<Color>(Colors.white)),
+      );
+
+  // RenderErrorBox.backgroundColor = Colors.transparent;
+  // RenderErrorBox.textStyle = ui.TextStyle(color: Colors.transparent);
 
   runApp(MaterialApp(
     title: 'Drugz No Sell Plz',
@@ -47,7 +57,10 @@ Future<bool> currentUserExists() async {
   await LocalStorage.init();
   print(LocalStorage.prefs.toString());
   userReg = LocalStorage.prefs.getBool("userRegistered") ?? false;
-  globals.currentUser = User(LocalStorage.prefs.getString("currentUserName"),
-      LocalStorage.prefs.getString("currentUUID"), "Time IDK");
+  globals.currentUser = User(
+      LocalStorage.prefs.getString("currentUserName"),
+      LocalStorage.prefs.getString("currentUUID"),
+      "Time IDK",
+      LocalStorage.prefs.getString("RSA_private_key"));
   return userReg;
 }

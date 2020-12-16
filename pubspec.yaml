@@ -17,6 +17,7 @@ dependencies:
   qr_flutter: ^3.1.0
   qr_code_scanner: ^0.0.13
   path_provider: ^1.6.24
+  basic_utils: ^2.6.3
 
 dev_dependencies:
   flutter_test:

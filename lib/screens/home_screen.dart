@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -12,7 +13,12 @@ import 'package:software_engineering_project/utility/local_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +30,8 @@ class HomeScreen extends StatelessWidget {
           ),
           actions: [
             IconButton(
-                icon: Icon(Icons.share), onPressed: () => {showQRCode(context)})
+                icon: Icon(Icons.share),
+                onPressed: () => {showQRCode(context)})
           ],
         ),
         body: ChatList(),
@@ -71,31 +78,52 @@ class ChatList extends StatefulWidget {
 class _ChatListState extends State<ChatList> {
   List<User> activeChats = List<User>();
   var jsonHelp = JsonHelper();
-  var activeChatListFirebase = FirebaseFirestore.instance
-      .collection("Users")
-      .doc(globals.currentUser.uuID)
-      .collection("messages")
-      .doc("activeChats")
-      .snapshots();
+  Stream<DocumentSnapshot> activeChatListFirebase;
   QuerySnapshot usersCollection;
+  Timer refreshTimer;
 
-  Future getContacts() async {
-    var contacts = await FirebaseFirestore.instance
-        .collection("Users").get();
+  void loadCurrentUserData() async {
+    await LocalStorage.init();
+    globals.currentUser = User(
+        LocalStorage.prefs.getString("currentUserName"),
+        LocalStorage.prefs.getString("currentUUID"),
+        "Time IDK",
+        LocalStorage.prefs.getString("RSA_private_key"));
+  }
+
+  void getContacts() async {
+    var allUsers = await FirebaseFirestore.instance.collection("Users").get();
     setState(() {
-      usersCollection = contacts;
+      usersCollection = allUsers;
     });
   }
 
   @override
   void initState() {
-    getContacts();
     super.initState();
+    activeChatListFirebase = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(globals.currentUser.uuID)
+        .collection("messages")
+        .doc("activeChats")
+        .snapshots();
+    getContacts();
+    loadCurrentUserData();
+    refreshTimer = Timer.periodic(Duration(seconds: 5), (Timer t) {
+      setState(() {
+        print('refreshing screen');
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    refreshTimer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return StreamBuilder<DocumentSnapshot>(
         stream: activeChatListFirebase,
         builder:
@@ -113,14 +141,17 @@ class _ChatListState extends State<ChatList> {
   }
 
   Widget chatListBuilder(DocumentSnapshot activeChatList) {
-    var usersList = usersCollection.docs.map((e) => e.data()).toList();
+    var usersList = usersCollection?.docs?.map((e) => e.data())?.toList();
     activeChats.clear();
     //converting activeChatList to active chat map
     var activeChatUUIDList = activeChatList.data().keys.toList();
     activeChatUUIDList.removeWhere((element) => element == "init");
-    usersList.retainWhere((element) => activeChatUUIDList.contains(element["UUID"]));
+    usersList
+        ?.retainWhere((element) => activeChatUUIDList.contains(element["UUID"]));
     //convert to user list
-    usersList.forEach((element) {activeChats.add(User.fromJson(element));});
+    usersList?.forEach((element) {
+      activeChats.add(User.fromJson(element));
+    });
 
     //activeChats = usersCollection.docs.map((e) => User.fromJson(e.data()));
 
@@ -131,7 +162,6 @@ class _ChatListState extends State<ChatList> {
   }
 
   Widget chatListWidget() {
-
     //if active chat list is empty return info on how to create new chat
     if (activeChats.isEmpty) {
       return Center(
@@ -237,7 +267,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
         children: <Widget>[
           DrawerHeader(
             child: Text(
-              globals.currentUser.userName,
+              LocalStorage.prefs.getString("currentUserName"),
               style: TextStyle(fontSize: globals.kDefaultHeaderSize * 1.5),
             ),
             decoration: BoxDecoration(
@@ -338,7 +368,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
     //deleting user from firestore
     LocalStorage.init();
-    var currentUUID = LocalStorage.prefs.getString("currentUUID");
+    var currentUUID = globals.currentUser.uuID;
 
     var users = FirebaseFirestore.instance.collection("Users");
     await users
@@ -348,12 +378,12 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
     LocalStorage.prefs.remove("currentUUID");
     LocalStorage.prefs.remove("currentUserName");
+    LocalStorage.prefs.remove("RSA_private_key");
     LocalStorage.prefs.setBool("userRegistered", false);
     Navigator.of(context).pushReplacementNamed("/register");
 
-
     setState(() {
-      print("update after setstate");
+      print("update after set-state");
     });
   }
 }
