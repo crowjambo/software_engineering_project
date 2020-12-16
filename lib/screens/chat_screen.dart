@@ -22,6 +22,28 @@ class _ChatScreenState extends State<ChatScreen> {
     this.fileSysHelp = FileSystemHelper();
     this.messageFilePath =
         globals.kChatDir + receiverData.uuID + globals.kMessageFile;
+    this.senderMessagesStream = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(globals.currentUser.uuID)
+        .collection("messages")
+        .doc("activeChats")
+        .collection(receiverData.uuID)
+        .orderBy("sentTime")
+        .snapshots();
+
+    this.receiverMessagesFS = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(receiverData.uuID)
+        .collection("messages")
+        .doc("activeChats")
+        .collection(globals.currentUser.uuID);
+
+    this.senderMessagesFS = FirebaseFirestore.instance
+        .collection("Users")
+        .doc(globals.currentUser.uuID)
+        .collection("messages")
+        .doc("activeChats")
+        .collection(receiverData.uuID);
   }
 
   User receiverData;
@@ -51,28 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
-    this.senderMessagesStream = FirebaseFirestore.instance
-        .collection("Users")
-        .doc(globals.currentUser.uuID)
-        .collection("messages")
-        .doc("activeChats")
-        .collection(receiverData.uuID)
-        .orderBy("sentTime")
-        .snapshots();
 
-    this.receiverMessagesFS = FirebaseFirestore.instance
-        .collection("Users")
-        .doc(receiverData.uuID)
-        .collection("messages")
-        .doc("activeChats")
-        .collection(globals.currentUser.uuID);
-
-    this.senderMessagesFS = FirebaseFirestore.instance
-        .collection("Users")
-        .doc(globals.currentUser.uuID)
-        .collection("messages")
-        .doc("activeChats")
-        .collection(receiverData.uuID);
 
     jsonHelp.getJsonArray(this.messageFilePath).then((result) {
       //result is List<dynamic> so map that on List<Message>
@@ -112,7 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _chatBubble(Message message, bool isMe, bool isSameUser) {
     //decrypting message text;
     String messageText;
-    if (message.sender.uuID == receiverData.uuID) {
+    if (message.sender.uuID == receiverData?.uuID) {
       var user_private_key_string = globals.currentUser.RSA_private_key;
       var user_private_key =
           CryptoUtils.rsaPrivateKeyFromPem(user_private_key_string);
@@ -264,10 +265,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget chatArea(QuerySnapshot messagesFF) {
     List<Message> messages = List<Message>();
-    if (messagesFromJsonList != null) messages.addAll(messagesFromJsonList);
-    messages.addAll(
-        messagesFF.docs.map((e) => Message.fromJson(e.data())).toList());
-    print(messagesFF.docs.length);
+    if (messagesFromJsonList != null) messages?.addAll(messagesFromJsonList);
+    messages?.addAll(
+        messagesFF?.docs?.map((e) => Message.fromJson(e?.data()))?.toList());
 
     if (messages.isEmpty) {
       return Column(
@@ -323,16 +323,14 @@ class _ChatScreenState extends State<ChatScreen> {
         .then((firestoreMessages) {
       if (messagesFromJsonList != null) {
         messageList
-            .addAll(messagesFromJsonList.map((e) => e.toJson()).toList());
+            ?.addAll(messagesFromJsonList?.map((e) => e.toJson())?.toList());
       }
-      messageList.addAll(firestoreMessages.docs.map((e) => e.data()));
+      messageList?.addAll(firestoreMessages?.docs?.map((e) => e?.data()));
       var messageListJson = jsonHelp.returnJsonString(messageList);
-      print(messageListJson);
-      print(messageList.length);
       jsonHelp.writeJsonStringToFile(messageFilePath, messageListJson);
       //deleting all messages in firestore
-      firestoreMessages.docs.forEach((element) {
-        element.reference.delete();
+      firestoreMessages?.docs?.forEach((element) {
+        element?.reference?.delete();
       });
     });
   }
@@ -352,7 +350,7 @@ class _ChatScreenState extends State<ChatScreen> {
     var message = Message(globals.currentUser, receiverData.uuID,
         DateTime.now().millisecondsSinceEpoch.toString(), messageText);
     //sending message to firestore
-    senderMessagesFS.add(message.toJson());
-    receiverMessagesFS.add(encryptedMessage.toJson());
+    senderMessagesFS?.add(message.toJson());
+    receiverMessagesFS?.add(encryptedMessage.toJson());
   }
 }

@@ -8,8 +8,6 @@ Message initMessage = Message(currentUser, "toUUID", "0", "Init");
 //user UUID and username
 User currentUser;
 
-
-
 // constants
 const double kDefaultPadding = 16.0;
 const double kDefaultHeaderSize = 22.0;
