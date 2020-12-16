@@ -13,6 +13,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +63,8 @@ class HomeScreen extends StatelessWidget {
           );
         });
   }
+
+
 }
 
 // chat list stuff
@@ -79,6 +84,12 @@ class _ChatListState extends State<ChatList> {
       .snapshots();
   QuerySnapshot usersCollection;
 
+  void loadCurrentUserData() async {
+    await LocalStorage.init();
+    globals.currentUser = User(LocalStorage.prefs.getString("currentUserName"),
+        LocalStorage.prefs.getString("currentUUID"), "Time IDK", LocalStorage.prefs.getString("RSA_private_key"));
+  }
+
   Future getContacts() async {
     var contacts = await FirebaseFirestore.instance
         .collection("Users").get();
@@ -91,6 +102,7 @@ class _ChatListState extends State<ChatList> {
   void initState() {
     super.initState();
     getContacts();
+    loadCurrentUserData();
   }
 
   @override
