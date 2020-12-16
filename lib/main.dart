@@ -48,6 +48,6 @@ Future<bool> currentUserExists() async {
   print(LocalStorage.prefs.toString());
   userReg = LocalStorage.prefs.getBool("userRegistered") ?? false;
   globals.currentUser = User(LocalStorage.prefs.getString("currentUserName"),
-      LocalStorage.prefs.getString("currentUUID"), "Time IDK");
+      LocalStorage.prefs.getString("currentUUID"), "Time IDK", LocalStorage.prefs.getString("RSA_private_key"));
   return userReg;
 }

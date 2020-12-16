@@ -33,7 +33,7 @@ class HomeScreen extends StatelessWidget {
 
   Future showQRCode(BuildContext context) {
     LocalStorage.init();
-    var currentUUID = LocalStorage.prefs.getString("currentUUID");
+    var currentUUID = globals.currentUser.uuID;
 
     return showDialog(
         context: context,
@@ -89,8 +89,8 @@ class _ChatListState extends State<ChatList> {
 
   @override
   void initState() {
-    getContacts();
     super.initState();
+    getContacts();
   }
 
   @override
@@ -338,7 +338,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
     //deleting user from firestore
     LocalStorage.init();
-    var currentUUID = LocalStorage.prefs.getString("currentUUID");
+    var currentUUID = globals.currentUser.uuID;
 
     var users = FirebaseFirestore.instance.collection("Users");
     await users
@@ -348,12 +348,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
     LocalStorage.prefs.remove("currentUUID");
     LocalStorage.prefs.remove("currentUserName");
+    LocalStorage.prefs.remove("RSA_private_key");
     LocalStorage.prefs.setBool("userRegistered", false);
     Navigator.of(context).pushReplacementNamed("/register");
 
 
     setState(() {
-      print("update after setstate");
+      print("update after set-state");
     });
   }
 }

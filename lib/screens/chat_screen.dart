@@ -5,6 +5,7 @@ import 'package:software_engineering_project/utility/file_sys_help.dart';
 import 'package:software_engineering_project/utility/globals.dart' as globals;
 import 'package:software_engineering_project/utility/json_help.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:basic_utils/basic_utils.dart';
 
 class ChatScreen extends StatefulWidget {
   final User senderData;
@@ -109,6 +110,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
 
   Widget _chatBubble(Message message, bool isMe, bool isSameUser) {
+    //decrypting message text;
+    var user_private_key_string = globals.currentUser.RSA_private_key;
+    var user_private_key = CryptoUtils.rsaPrivateKeyFromPem(user_private_key_string);
+    var decryptedMessage = CryptoUtils.rsaDecrypt(message.text, user_private_key);
+
     if (isMe) {
       return Column(
         children: <Widget>[
@@ -132,7 +138,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ),
               child: Text(
-                message.text,
+                decryptedMessage,
                 style: TextStyle(
                   color: Colors.white,
                 ),
@@ -180,7 +186,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ),
               child: Text(
-                message.text,
+                decryptedMessage,
                 style: TextStyle(
                   color: Colors.black54,
                 ),
@@ -320,8 +326,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void sendMessage(String messageText) async {
     if (messageText.isEmpty) return;
+
+    var receiver_public_key_string = receiverData.RSA_public_key;
+    var receiver_public_key = CryptoUtils.rsaPublicKeyFromPem(receiver_public_key_string);
+    var encryptedMessage = CryptoUtils.rsaEncrypt(messageText, receiver_public_key);
+
     var message = Message(globals.currentUser, receiverData.uuID,
-        DateTime.now().millisecondsSinceEpoch.toString(), messageText);
+        DateTime.now().millisecondsSinceEpoch.toString(), encryptedMessage);
 
     //sending message to firestore
     senderMessagesFS.add(message.toJson());

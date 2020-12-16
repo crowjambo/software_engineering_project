@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:software_engineering_project/utility/globals.dart';
 import 'package:software_engineering_project/utility/local_storage.dart';
 import 'package:uuid/uuid.dart';
+import 'package:basic_utils/basic_utils.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -53,12 +54,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _createUser(String userName) async {
-    //TODO: add crypto key and userAddID and post that s to firebase
     var users = FirebaseFirestore.instance.collection("Users");
 
     //generating new UUID
     var uuidGen = Uuid();
     var uuid = uuidGen.v4();
+
+    //Generating RSA KEYS
+    var keyPar = CryptoUtils.generateRSAKeyPair();
+    var privateKeyString = CryptoUtils.encodeRSAPrivateKeyToPem(keyPar.privateKey);
+    var publicKeyString = CryptoUtils.encodeRSAPublicKeyToPem(keyPar.publicKey);
 
     //sending username and UUID to firebase storage
     users
@@ -66,7 +71,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         .set({
           "username": userName,
           "UUID": uuid,
-          "addedTime" : DateTime.now().toString()
+          "addedTime" : DateTime.now().toString(),
+          "RSA_public_key" : publicKeyString
           
         })
         .then((value) => print("user added uuid: " + uuid))
@@ -75,11 +81,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     users.doc(uuid).collection("messages").doc("activeChats").set({
       'init': "init",
     });
-    
+
     //saving username andUUID to local storage
     await LocalStorage.init();
     LocalStorage.prefs.setString("currentUUID", uuid);
     LocalStorage.prefs.setString("currentUserName", userName);
+    LocalStorage.prefs.setString("RSA_private_key", privateKeyString);
     LocalStorage.prefs.setBool("userRegistered", true);
   }
 
