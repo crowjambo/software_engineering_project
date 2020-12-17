@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:test/test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:software_engineering_project/main.dart';
+
 import 'package:software_engineering_project/models/user_model.dart';
-import 'package:software_engineering_project/screens/home_screen.dart';
 import 'package:software_engineering_project/controllers/user_controller.dart';
+
 
 var mockUser = User("testUsername", "123", "00:00", "privateKey");
 
@@ -14,20 +16,26 @@ void main() {
       SharedPreferences.setMockInitialValues(<String, dynamic>{
         "currentUserName": mockUser.userName,
         "currentUUID": mockUser.uuID,
+        "RSA_private_key": "privateKey123",
+        "RSA_public_key": "publicKey123",
         "userRegistered": true
       });
 
-      // For the user to be in the local storage
+      // Check for the user to be in the local storage
       var userCreated = await currentUserExists();
       expect(userCreated, true);
 
       // Removal
+      await deleteUserInLocalStorage();
 
-      // The deleteCurrentUser should be refactored so the tests could be written for firebase(optionally) and local storage
-
-      // deleteCurrentUserFromLocalStorage();
+      // Checks if user was deleted
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString("currentUUID"), null);
       expect(prefs.getString("currentUserName"), null);
+      expect(prefs.getString("RSA_private_key"), null);
+      expect(prefs.getBool("userRegistered"), false);
+
     });
+
   });
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:software_engineering_project/controllers/user_controller.dart';
 
 import 'package:software_engineering_project/models/user_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
@@ -354,32 +355,10 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   //this method deletes user info from local storage and firebase Users collection
   void deleteCurrentUser() async {
-    //deleting everything from local storage
-    var fileSysHelp = FileSystemHelper();
-    var chatDir = Directory(await fileSysHelp.getDirPath(globals.kChatDir));
-    var contactFile =
-        File(await fileSysHelp.getFilePath(globals.kContactListJson));
-    if (chatDir.existsSync()) {
-      await chatDir.delete(recursive: true);
-    }
-    if (contactFile.existsSync()) {
-      await contactFile.delete(recursive: true);
-    }
 
-    //deleting user from firestore
-    await LocalStorage.init();
-    var currentUUID = globals.currentUser.uuID;
-
-    var users = FirebaseFirestore.instance.collection("Users");
-    await users
-        .doc(currentUUID)
-        .delete()
-        .catchError((error) => print("Failed to delete user: $error"));
-
-    LocalStorage.prefs.remove("currentUUID");
-    LocalStorage.prefs.remove("currentUserName");
-    LocalStorage.prefs.remove("RSA_private_key");
-    LocalStorage.prefs.setBool("userRegistered", false);
+    // Idk whether to leave this here or toss it straight to onTap function in the widget.
+    // TODO: decide
+    deleteUser();
     Navigator.of(context).pushReplacementNamed("/register");
 
     setState(() {

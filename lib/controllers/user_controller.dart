@@ -1,17 +1,19 @@
+import 'dart:io';
+
 import 'package:basic_utils/basic_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:software_engineering_project/models/user_model.dart';
+import 'package:software_engineering_project/utility/file_sys_help.dart';
 import 'package:software_engineering_project/utility/local_storage.dart';
 import 'package:software_engineering_project/utility/globals.dart' as globals;
 import 'package:uuid/uuid.dart';
 
 void createUser(var userName) {
-  _createUserInLocalStorage(userName);
-  _createUserInFirebase();
+  createUserInLocalStorage(userName);
+  createUserInFirebase();
 }
 
-
-void _createUserInLocalStorage(var userName) async {
+void createUserInLocalStorage(var userName) async {
   //generating new UUID
   var uuidGen = Uuid();
   var uuid = uuidGen.v4();
@@ -31,7 +33,7 @@ void _createUserInLocalStorage(var userName) async {
   LocalStorage.prefs.setBool("userRegistered", true);
 }
 
-void _createUserInFirebase() async {
+void createUserInFirebase() async {
   var users = FirebaseFirestore.instance.collection("Users");
   await LocalStorage.init();
 
@@ -56,10 +58,46 @@ void _createUserInFirebase() async {
   });
 }
 
+void deleteUser() {
+  deleteUserInLocalStorage();
+  deleteUserInFirebase();
+}
+
+void deleteUserInLocalStorage() async {
+  await LocalStorage.init();
+
+  //deleting everything from local storage
+  var fileSysHelp = FileSystemHelper();
+  var chatDir = Directory(await fileSysHelp.getDirPath(globals.kChatDir));
+  var contactFile =
+  File(await fileSysHelp.getFilePath(globals.kContactListJson));
+  if (chatDir.existsSync()) {
+    await chatDir.delete(recursive: true);
+  }
+  if (contactFile.existsSync()) {
+    await contactFile.delete(recursive: true);
+  }
+
+  LocalStorage.prefs.remove("currentUUID");
+  LocalStorage.prefs.remove("currentUserName");
+  LocalStorage.prefs.remove("RSA_private_key");
+  LocalStorage.prefs.setBool("userRegistered", false);
+}
+
+void deleteUserInFirebase() async {
+  var currentUUID = globals.currentUser.uuID;
+
+  var users = FirebaseFirestore.instance.collection("Users");
+  await users
+      .doc(currentUUID)
+      .delete()
+      .catchError((error) => print("Failed to delete user: $error"));
+}
+
 Future<bool> currentUserExists() async {
   bool userReg;
   await LocalStorage.init();
-  print(LocalStorage.prefs.toString());
+  // print(LocalStorage.prefs.toString());
   userReg = LocalStorage.prefs.getBool("userRegistered") ?? false;
   globals.currentUser = User(
       LocalStorage.prefs.getString("currentUserName"),
