@@ -367,7 +367,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
     }
 
     //deleting user from firestore
-    LocalStorage.init();
+    await LocalStorage.init();
     var currentUUID = globals.currentUser.uuID;
 
     var users = FirebaseFirestore.instance.collection("Users");
