@@ -1,5 +1,4 @@
 @Timeout(const Duration(minutes: 2))
-
 import 'package:flutter_driver/flutter_driver.dart';
 import 'package:test/test.dart';
 
@@ -14,8 +13,11 @@ void main() {
     final QRImage = find.byValueKey("QRImage");
 
     // Drawer
-    final DrawerButton = find.byValueKey("DrawerButton");
+    final homeScreen = find.byValueKey("HomeScreen");
     final deleteButton = find.byValueKey("DeleteAcc");
+
+    final SerializableFinder app = find.byValueKey("HomeScreen");
+    final SerializableFinder drawerOpenButton = find.byValueKey("Drawer");
 
     // Screen
     final mainArea = find.byValueKey("MainArea");
@@ -40,25 +42,18 @@ void main() {
         await driver.tap(createNewIdentityButton);
         await driver.waitFor(find.text('Inbox'));
       });
-
     });
 
-    test("Open QR image", () async {
-      await driver.runUnsynchronized(() async {
-        await driver.tap(QRButton);
-        await driver.waitFor(QRImage);
-      });
-    });
-
-    //TODO: figure out how to open the drawer ):
-    // test("Delete account", () async {
+    // test("Open QR image", () async {
     //   await driver.runUnsynchronized(() async {
-    //     await driver.tap(DrawerButton);
-    //
-    //     await driver.tap(deleteButton);
-    //     await driver.waitFor(find.text('Create New Identity'));
+    //     await driver.tap(QRButton);
+    //     await driver.waitFor(QRImage);
     //   });
     // });
 
+    //TODO: figure out how to open the drawer ):
+    test("Delete account", () async {
+
+    });
   });
 }

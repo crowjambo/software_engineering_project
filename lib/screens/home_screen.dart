@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: Key("HomeScreen"),
         appBar: AppBar(
           elevation: 8,
           title: Text(
@@ -36,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         body: ChatList(),
-        drawer: MenuDrawer(), key: Key("DrawerButton"),);
+        drawer: MenuDrawer());
   }
 
   Future showQRCode(BuildContext context) {
