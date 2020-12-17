@@ -30,4 +30,25 @@ void main() {
     expect(prefs.getString("RSA_private_key"), null);
     expect(prefs.getBool("userRegistered"), false);
   });
+
+  test('When user is not deleted Then it stays in local storage', () async {
+    SharedPreferences.setMockInitialValues(<String, dynamic>{
+      "currentUserName": testUser.userName,
+      "currentUUID": testUser.uuID,
+      "RSA_private_key": "privateKey123",
+      "RSA_public_key": "publicKey123",
+      "userRegistered": true
+    });
+
+    // Check for the user to be in the local storage
+    var userCreated = await currentUserExists();
+    expect(userCreated, true);
+
+    // Checks if user was deleted
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString("currentUUID"), null);
+    expect(prefs.getString("currentUserName"), null);
+    expect(prefs.getString("RSA_private_key"), null);
+    expect(prefs.getBool("userRegistered"), false);
+  });
 }

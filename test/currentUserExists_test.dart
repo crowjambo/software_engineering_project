@@ -35,4 +35,16 @@ void main() {
     var result = globals.currentUser.userName;
     expect(result, testUser.userName);
   });
+
+  test('When user is registered Then uuid is stored globally', () async {
+    SharedPreferences.setMockInitialValues(<String, dynamic>{
+      "currentUserName": testUser.userName,
+      "currentUUID": testUser.uuID,
+    });
+
+    await currentUserExists();
+
+    var result = globals.currentUser.uuID;
+    expect(result, testUser.uuID);
+  });
 }

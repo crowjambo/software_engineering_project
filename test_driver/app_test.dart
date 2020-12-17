@@ -44,12 +44,12 @@ void main() {
       });
     });
 
-    // test("Open QR image", () async {
-    //   await driver.runUnsynchronized(() async {
-    //     await driver.tap(QRButton);
-    //     await driver.waitFor(QRImage);
-    //   });
-    // });
+    test("Open QR image", () async {
+      await driver.runUnsynchronized(() async {
+        await driver.tap(QRButton);
+        await driver.waitFor(QRImage);
+      });
+    });
 
     //TODO: figure out how to open the drawer ):
     test("Delete account", () async {
