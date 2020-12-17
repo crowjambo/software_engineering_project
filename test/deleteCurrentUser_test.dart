@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:software_engineering_project/models/user_model.dart';
 import 'package:software_engineering_project/controllers/user_controller.dart';
 
-var testUser = User("testUsername", "123", "00:00", "privateKey");
+var testUser = User("testUsername", "123", "00:00", "privateKey123");
 
 void main() {
   test('When user is deleted Then it is removed from local storage', () async {
@@ -44,11 +44,11 @@ void main() {
     var userCreated = await currentUserExists();
     expect(userCreated, true);
 
-    // Checks if user was deleted
+    // Checks if user was not deleted
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    expect(prefs.getString("currentUUID"), null);
-    expect(prefs.getString("currentUserName"), null);
-    expect(prefs.getString("RSA_private_key"), null);
-    expect(prefs.getBool("userRegistered"), false);
+    expect(prefs.getString("currentUUID"), testUser.uuID);
+    expect(prefs.getString("currentUserName"), testUser.userName);
+    expect(prefs.getString("RSA_private_key"), testUser.RSA_private_key);
+    expect(prefs.getBool("userRegistered"), true);
   });
 }
