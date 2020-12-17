@@ -7,7 +7,6 @@ import 'package:software_engineering_project/controllers/user_controller.dart';
 
 import 'package:software_engineering_project/models/user_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
-import 'package:software_engineering_project/utility/file_sys_help.dart';
 import 'package:software_engineering_project/utility/globals.dart' as globals;
 import 'package:software_engineering_project/utility/json_help.dart';
 import 'package:software_engineering_project/utility/local_storage.dart';
@@ -37,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         body: ChatList(),
-        drawer: MenuDrawer());
+        drawer: MenuDrawer(), key: Key("DrawerButton"),);
   }
 
   Future showQRCode(BuildContext context) {
@@ -51,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
                 padding: const EdgeInsets.all(globals.kDefaultPadding),
                 child: QrImage(
+                  key: Key("QRImage"),
                   data: currentUUID,
                   version: QrVersions.auto,
                   size: 320,
@@ -111,16 +111,16 @@ class _ChatListState extends State<ChatList> {
         .snapshots();
     getContacts();
     loadCurrentUserData();
-    refreshTimer = Timer.periodic(Duration(seconds: 5), (Timer t) {
-      setState(() {
-        print('refreshing screen');
-      });
-    });
+    // refreshTimer = Timer.periodic(Duration(seconds: 5), (Timer t) {
+    //   setState(() {
+    //     print('refreshing screen');
+    //   });
+    // });
   }
 
   @override
   void dispose() {
-    refreshTimer?.cancel();
+    // refreshTimer?.cancel();
     super.dispose();
   }
 
@@ -263,6 +263,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      key: Key("Drawer"),
       child: ListView(
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
@@ -297,6 +298,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
             },
           ),
           ListTile(
+            key: Key("DeleteAcc"),
             title: Text("Delete Your Account"),
             leading: Icon(Icons.delete_forever),
             onTap: () {
