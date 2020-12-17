@@ -31,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             IconButton(
+                key: Key("QRButton"),
                 icon: Icon(Icons.share),
                 onPressed: () => {showQRCode(context)})
           ],
@@ -147,8 +148,8 @@ class _ChatListState extends State<ChatList> {
     //converting activeChatList to active chat map
     var activeChatUUIDList = activeChatList.data().keys.toList();
     activeChatUUIDList.removeWhere((element) => element == "init");
-    usersList
-        ?.retainWhere((element) => activeChatUUIDList.contains(element["UUID"]));
+    usersList?.retainWhere(
+        (element) => activeChatUUIDList.contains(element["UUID"]));
     //convert to user list
     usersList?.forEach((element) {
       activeChats.add(User.fromJson(element));
@@ -355,7 +356,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   //this method deletes user info from local storage and firebase Users collection
   void deleteCurrentUser() async {
-
     // Idk whether to leave this here or toss it straight to onTap function in the widget.
     // TODO: decide
     deleteUser();

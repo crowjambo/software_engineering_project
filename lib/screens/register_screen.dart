@@ -25,6 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Padding(
               padding: EdgeInsets.all(kDefaultPadding),
               child: TextField(
+                key: Key("userNameInput"),
                 controller: userNameTextController,
                 decoration: InputDecoration(hintText: "UserName"),
                 style: TextStyle(
@@ -34,6 +35,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Padding(
               padding: EdgeInsets.all(kDefaultPadding),
               child: RaisedButton(
+                key: Key("createNewIdentity"),
                   color: kAccentColor,
                   child: Text("Create New Identity"),
                   onPressed: () {
