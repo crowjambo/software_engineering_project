@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:software_engineering_project/controllers/user_controller.dart';
 
 import 'package:software_engineering_project/models/user_model.dart';
 import 'package:software_engineering_project/screens/chat_screen.dart';
-import 'package:software_engineering_project/utility/file_sys_help.dart';
 import 'package:software_engineering_project/utility/globals.dart' as globals;
 import 'package:software_engineering_project/utility/json_help.dart';
 import 'package:software_engineering_project/utility/local_storage.dart';
@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: Key("HomeScreen"),
         appBar: AppBar(
           elevation: 8,
           title: Text(
@@ -30,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             IconButton(
+                key: Key("QRButton"),
                 icon: Icon(Icons.share),
                 onPressed: () => {showQRCode(context)})
           ],
@@ -49,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
                 padding: const EdgeInsets.all(globals.kDefaultPadding),
                 child: QrImage(
+                  key: Key("QRImage"),
                   data: currentUUID,
                   version: QrVersions.auto,
                   size: 320,
@@ -109,16 +112,16 @@ class _ChatListState extends State<ChatList> {
         .snapshots();
     getContacts();
     loadCurrentUserData();
-    refreshTimer = Timer.periodic(Duration(seconds: 5), (Timer t) {
-      setState(() {
-        print('refreshing screen');
-      });
-    });
+    // refreshTimer = Timer.periodic(Duration(seconds: 5), (Timer t) {
+    //   setState(() {
+    //     print('refreshing screen');
+    //   });
+    // });
   }
 
   @override
   void dispose() {
-    refreshTimer?.cancel();
+    // refreshTimer?.cancel();
     super.dispose();
   }
 
@@ -146,8 +149,8 @@ class _ChatListState extends State<ChatList> {
     //converting activeChatList to active chat map
     var activeChatUUIDList = activeChatList.data().keys.toList();
     activeChatUUIDList.removeWhere((element) => element == "init");
-    usersList
-        ?.retainWhere((element) => activeChatUUIDList.contains(element["UUID"]));
+    usersList?.retainWhere(
+        (element) => activeChatUUIDList.contains(element["UUID"]));
     //convert to user list
     usersList?.forEach((element) {
       activeChats.add(User.fromJson(element));
@@ -258,9 +261,12 @@ class MenuDrawer extends StatefulWidget {
 }
 
 class _MenuDrawerState extends State<MenuDrawer> {
+  var firebaseInstance = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      key: Key("Drawer"),
       child: ListView(
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
@@ -295,6 +301,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
             },
           ),
           ListTile(
+            key: Key("DeleteAcc"),
             title: Text("Delete Your Account"),
             leading: Icon(Icons.delete_forever),
             onTap: () {
@@ -354,32 +361,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   //this method deletes user info from local storage and firebase Users collection
   void deleteCurrentUser() async {
-    //deleting everything from local storage
-    var fileSysHelp = FileSystemHelper();
-    var chatDir = Directory(await fileSysHelp.getDirPath(globals.kChatDir));
-    var contactFile =
-        File(await fileSysHelp.getFilePath(globals.kContactListJson));
-    if (chatDir.existsSync()) {
-      await chatDir.delete(recursive: true);
-    }
-    if (contactFile.existsSync()) {
-      await contactFile.delete(recursive: true);
-    }
 
-    //deleting user from firestore
-    LocalStorage.init();
-    var currentUUID = globals.currentUser.uuID;
-
-    var users = FirebaseFirestore.instance.collection("Users");
-    await users
-        .doc(currentUUID)
-        .delete()
-        .catchError((error) => print("Failed to delete user: $error"));
-
-    LocalStorage.prefs.remove("currentUUID");
-    LocalStorage.prefs.remove("currentUserName");
-    LocalStorage.prefs.remove("RSA_private_key");
-    LocalStorage.prefs.setBool("userRegistered", false);
+    deleteUser(firebaseInstance);
     Navigator.of(context).pushReplacementNamed("/register");
 
     setState(() {
