@@ -44,6 +44,9 @@ void main() {
     var userCreated = await currentUserExists();
     expect(userCreated, true);
 
+    // Doesn't remove on time
+    deleteUserInLocalStorage();
+
     // Checks if user was not deleted
     SharedPreferences prefs = await SharedPreferences.getInstance();
     expect(prefs.getString("currentUUID"), testUser.uuID);

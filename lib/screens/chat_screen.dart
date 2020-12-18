@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/message_model.dart';
 import 'package:software_engineering_project/models/user_model.dart';
+import 'package:software_engineering_project/utility/crypto.dart';
 import 'package:software_engineering_project/utility/file_sys_help.dart';
 import 'package:software_engineering_project/utility/globals.dart' as globals;
 import 'package:software_engineering_project/utility/json_help.dart';
@@ -114,10 +115,7 @@ class _ChatScreenState extends State<ChatScreen> {
     //decrypting message text;
     String messageText;
     if (message.sender.uuID == receiverData?.uuID) {
-      var user_private_key_string = globals.currentUser.RSA_private_key;
-      var user_private_key =
-          CryptoUtils.rsaPrivateKeyFromPem(user_private_key_string);
-      messageText = CryptoUtils.rsaDecrypt(message.text, user_private_key);
+      messageText = decrypt(message);
     } else {
       messageText = message.text;
     }
@@ -338,11 +336,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void sendMessage(String messageText) async {
     if (messageText.isEmpty) return;
 
-    var receiver_public_key_string = receiverData.RSA_public_key;
-    var receiver_public_key =
-        CryptoUtils.rsaPublicKeyFromPem(receiver_public_key_string);
-    var encryptedText =
-        CryptoUtils.rsaEncrypt(messageText, receiver_public_key);
+    var encryptedText = encrypt(receiverData, messageText);
 
     var encryptedMessage = Message(globals.currentUser, receiverData.uuID,
         DateTime.now().millisecondsSinceEpoch.toString(), encryptedText);
