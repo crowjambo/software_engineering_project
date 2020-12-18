@@ -115,7 +115,7 @@ class _ChatScreenState extends State<ChatScreen> {
     //decrypting message text;
     String messageText;
     if (message.sender.uuID == receiverData?.uuID) {
-      messageText = decrypt(message);
+      messageText = decrypt(message.text);
     } else {
       messageText = message.text;
     }

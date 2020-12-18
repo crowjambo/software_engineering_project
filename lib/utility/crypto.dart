@@ -11,10 +11,10 @@ String encrypt(User receiverData, String messageText){
   return encryptedText;
 }
 
-String decrypt(Message message){
+String decrypt(String message){
   var userPrivateKeyString = globals.currentUser.RSA_private_key;
   var userPrivateKey =
   CryptoUtils.rsaPrivateKeyFromPem(userPrivateKeyString);
-  var messageText = CryptoUtils.rsaDecrypt(message.text, userPrivateKey);
+  var messageText = CryptoUtils.rsaDecrypt(message, userPrivateKey);
   return messageText;
 }
