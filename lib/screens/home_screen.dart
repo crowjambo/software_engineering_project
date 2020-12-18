@@ -112,16 +112,16 @@ class _ChatListState extends State<ChatList> {
         .snapshots();
     getContacts();
     loadCurrentUserData();
-    // refreshTimer = Timer.periodic(Duration(seconds: 5), (Timer t) {
-    //   setState(() {
-    //     print('refreshing screen');
-    //   });
-    // });
+    refreshTimer = Timer.periodic(Duration(seconds: 5), (Timer t) {
+      setState(() {
+        print('refreshing screen');
+      });
+    });
   }
 
   @override
   void dispose() {
-    // refreshTimer?.cancel();
+    refreshTimer?.cancel();
     super.dispose();
   }
 
