@@ -115,7 +115,7 @@ class _ChatScreenState extends State<ChatScreen> {
     //decrypting message text;
     String messageText;
     if (message.sender.uuID == receiverData?.uuID) {
-      messageText = decrypt(message.text);
+      messageText = decrypt(message.text, globals.currentUser.RSA_private_key);
     } else {
       messageText = message.text;
     }
@@ -336,7 +336,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void sendMessage(String messageText) async {
     if (messageText.isEmpty) return;
 
-    var encryptedText = encrypt(receiverData, messageText);
+    var encryptedText = encrypt(receiverData.RSA_public_key, messageText);
 
     var encryptedMessage = Message(globals.currentUser, receiverData.uuID,
         DateTime.now().millisecondsSinceEpoch.toString(), encryptedText);

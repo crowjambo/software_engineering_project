@@ -1,20 +1,14 @@
 import 'package:basic_utils/basic_utils.dart';
-import 'package:software_engineering_project/models/message_model.dart';
-import 'package:software_engineering_project/models/user_model.dart';
-import 'package:software_engineering_project/utility/globals.dart' as globals;
 
-String encrypt(User receiverData, String messageText){
-  var receiverPublicKeyString = receiverData.RSA_public_key;
-  var receiverPublicKey = CryptoUtils.rsaPublicKeyFromPem(receiverPublicKeyString);
+String encrypt(String RSAPublicKey, String messageText){
+  var receiverPublicKey = CryptoUtils.rsaPublicKeyFromPem(RSAPublicKey);
   var encryptedText = CryptoUtils.rsaEncrypt(messageText, receiverPublicKey);
 
   return encryptedText;
 }
 
-String decrypt(String message){
-  var userPrivateKeyString = globals.currentUser.RSA_private_key;
-  var userPrivateKey =
-  CryptoUtils.rsaPrivateKeyFromPem(userPrivateKeyString);
-  var messageText = CryptoUtils.rsaDecrypt(message, userPrivateKey);
-  return messageText;
+String decrypt(String RSAPrivateKey, String messageText){
+  var userPrivateKey = CryptoUtils.rsaPrivateKeyFromPem(RSAPrivateKey);
+  var decryptedMessage = CryptoUtils.rsaDecrypt(messageText, userPrivateKey);
+  return decryptedMessage;
 }

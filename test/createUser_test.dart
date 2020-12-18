@@ -8,9 +8,6 @@ void main() {
     // This is needed for the test to work. Otherwise async gap happens
     SharedPreferences.setMockInitialValues(<String, dynamic>{
       "currentUserName": "testUsername",
-      "currentUUID": "123",
-      "RSA_private_key": "privateKey123",
-      "RSA_public_key": "publicKey123",
       "userRegistered": true
     });
 
