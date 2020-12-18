@@ -261,6 +261,8 @@ class MenuDrawer extends StatefulWidget {
 }
 
 class _MenuDrawerState extends State<MenuDrawer> {
+  var firebaseInstance = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -359,9 +361,8 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   //this method deletes user info from local storage and firebase Users collection
   void deleteCurrentUser() async {
-    // Idk whether to leave this here or toss it straight to onTap function in the widget.
-    // TODO: decide
-    deleteUser();
+
+    deleteUser(firebaseInstance);
     Navigator.of(context).pushReplacementNamed("/register");
 
     setState(() {

@@ -8,9 +8,9 @@ import 'package:software_engineering_project/utility/local_storage.dart';
 import 'package:software_engineering_project/utility/globals.dart' as globals;
 import 'package:uuid/uuid.dart';
 
-void createUser(var userName) {
+void createUser(var userName, var firebase) {
   createUserInLocalStorage(userName);
-  createUserInFirebase();
+  createUserInFirebase(firebase);
 }
 
 void createUserInLocalStorage(var userName) async {
@@ -33,8 +33,8 @@ void createUserInLocalStorage(var userName) async {
   LocalStorage.prefs.setBool("userRegistered", true);
 }
 
-void createUserInFirebase() async {
-  var users = FirebaseFirestore.instance.collection("Users");
+void createUserInFirebase(var firebaseInstance) async {
+  var users = firebaseInstance.collection("Users");
   await LocalStorage.init();
 
   var uuid = LocalStorage.prefs.getString("currentUUID");
@@ -58,9 +58,9 @@ void createUserInFirebase() async {
   });
 }
 
-void deleteUser() {
+void deleteUser(var firebaseInstance) {
   deleteUserInLocalStorage();
-  deleteUserInFirebase();
+  deleteUserInFirebase(firebaseInstance);
 }
 
 void deleteUserInLocalStorage() async {
@@ -84,10 +84,10 @@ void deleteUserInLocalStorage() async {
   LocalStorage.prefs.setBool("userRegistered", false);
 }
 
-void deleteUserInFirebase() async {
+void deleteUserInFirebase(var firebaseInstance) async {
   var currentUUID = globals.currentUser.uuID;
 
-  var users = FirebaseFirestore.instance.collection("Users");
+  var users = firebaseInstance.collection("Users");
   await users
       .doc(currentUUID)
       .delete()

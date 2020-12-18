@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:software_engineering_project/controllers/user_controller.dart';
@@ -11,6 +12,8 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   var userNameTextController =
       TextEditingController(text: "testUsername"); //TODO: remove test username
+
+  var firebaseInstance = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     if (userNameTextController.text.isEmpty) {
                       _showNoUserNameAlert();
                     } else {
-                      createUser(userNameTextController.text);
+                      createUser(userNameTextController.text, firebaseInstance);
                       //go to home screen
                       Navigator.of(context).pushReplacementNamed('/home');
                     }
