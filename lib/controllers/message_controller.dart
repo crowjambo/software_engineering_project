@@ -35,6 +35,8 @@ void saveMessageListToJson(User receiverData, List<Message> messagesFromJsonList
 void sendMessage(String messageText, User receiverData, CollectionReference senderMessagesFS, CollectionReference receiverMessagesFS) async {
   if (messageText.isEmpty) return;
 
+  print(receiverData.RSA_public_key);
+
   var encryptedText = encrypt(receiverData.RSA_public_key, messageText);
 
   var encryptedMessage = Message(globals.currentUser, receiverData.uuID,

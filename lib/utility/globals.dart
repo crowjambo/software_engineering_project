@@ -1,3 +1,4 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:software_engineering_project/models/user_model.dart';
 import 'package:software_engineering_project/models/message_model.dart';
