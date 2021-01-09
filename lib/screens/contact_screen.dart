@@ -60,5 +60,4 @@ class _ContactScreenState extends State<ContactScreen> {
         });
   }
 
-
 }
