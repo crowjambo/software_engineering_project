@@ -6,6 +6,11 @@ import 'package:software_engineering_project/utility/json_help.dart';
 import 'package:software_engineering_project/utility/globals.dart' as globals;
 
 void createNewChat(dynamic contactData) async {
+  _createLocalNewChat(contactData);
+  _createFirebaseNewChat(contactData);
+}
+
+void _createLocalNewChat(dynamic contactData) async {
   var fileSysHelp = FileSystemHelper();
   var jsonHelp = JsonHelper();
   var contactChatDirPath = await fileSysHelp.getDirPath(globals.kChatDir) +
@@ -44,16 +49,18 @@ void createNewChat(dynamic contactData) async {
   print(updatedActiveChatsJsonString);
   jsonHelp.writeJsonStringToFile(
       globals.kActiveChatsJson, updatedActiveChatsJsonString);
+}
 
+void _createFirebaseNewChat(dynamic contactData){
   //adding chat info in firestore
-  var activeChatListFirebaseSender = FirebaseFirestore.instance
+  FirebaseFirestore.instance
       .collection("Users")
       .doc(globals.currentUser.uuID)
       .collection("messages")
       .doc("activeChats")
       .set({contactData["UUID"]: contactData["UUID"]},
       SetOptions(merge: true));
-  var activeChatListFirebaseReceiver = FirebaseFirestore.instance
+  FirebaseFirestore.instance
       .collection("Users")
       .doc(contactData["UUID"])
       .collection("messages")

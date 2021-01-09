@@ -7,7 +7,6 @@ import 'package:software_engineering_project/utility/globals.dart' as globals;
 import 'package:software_engineering_project/utility/json_help.dart';
 import 'package:software_engineering_project/controllers/message_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:basic_utils/basic_utils.dart';
 
 class ChatScreen extends StatefulWidget {
   final User senderData;
@@ -75,8 +74,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
-
-
     jsonHelp.getJsonArray(this.messageFilePath).then((result) {
       //result is List<dynamic> so map that on List<Message>
       setState(() {
@@ -120,8 +117,6 @@ class _ChatScreenState extends State<ChatScreen> {
     } else {
       messageText = message.text;
     }
-
-    //print(CryptoUtils.rsaDecrypt(message.text, user_private_key) + "ss");
 
     if (isMe) {
       return Column(

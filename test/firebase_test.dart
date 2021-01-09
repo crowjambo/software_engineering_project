@@ -2,7 +2,6 @@ import 'package:cloud_firestore_mocks/cloud_firestore_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:software_engineering_project/controllers/user_controller.dart';
-import 'package:software_engineering_project/utility/globals.dart' as globals;
 
 void main() {
   group("Database Tests", () {
@@ -10,12 +9,14 @@ void main() {
     var mockFirebase, userCollection;
 
     setUp(() {
+      // Initialize mock db
       mockFirebase = MockFirestoreInstance();
       userCollection = "Users";
 
       userName = "testUsername";
       uuid = "123uuid";
 
+      // MockInitialValues required for localStorage in test to work
       SharedPreferences.setMockInitialValues(<String, dynamic>{
         "currentUserName": userName,
         "currentUUID": uuid,
@@ -24,6 +25,7 @@ void main() {
         "userRegistered": true
       });
 
+      // Set mockFirebase structure
       mockFirebase.collection(userCollection).doc("anotheruuid").set({
         "username": "a name",
         "UUID": "anotheruuid",
