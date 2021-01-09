@@ -5,6 +5,7 @@ import 'package:software_engineering_project/utility/crypto.dart';
 import 'package:software_engineering_project/utility/file_sys_help.dart';
 import 'package:software_engineering_project/utility/globals.dart' as globals;
 import 'package:software_engineering_project/utility/json_help.dart';
+import 'package:software_engineering_project/controllers/message_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:basic_utils/basic_utils.dart';
 
@@ -104,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
               icon: Icon(Icons.arrow_back_ios),
               color: Colors.white,
               onPressed: () {
-                saveMessageListToJson();
+                saveMessageListToJson(receiverData, messagesFromJsonList, messageFilePath);
                 Navigator.pushReplacementNamed(context, "/home");
               }),
         ),
@@ -243,7 +244,7 @@ class _ChatScreenState extends State<ChatScreen> {
             iconSize: 25,
             color: Theme.of(context).primaryColor,
             onPressed: () {
-              sendMessage(messageTextController.text);
+              sendMessage(messageTextController.text, receiverData, senderMessagesFS, receiverMessagesFS);
               scrollChatList();
               messageTextController.clear();
             },
@@ -307,44 +308,4 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void saveMessageListToJson() async {
-    List<Map<String, dynamic>> messageList = List<Map<String, dynamic>>();
-
-    FirebaseFirestore.instance
-        .collection("Users")
-        .doc(globals.currentUser.uuID)
-        .collection("messages")
-        .doc("activeChats")
-        .collection(receiverData.uuID)
-        .orderBy("sentTime")
-        .get()
-        .then((firestoreMessages) {
-      if (messagesFromJsonList != null) {
-        messageList
-            ?.addAll(messagesFromJsonList?.map((e) => e.toJson())?.toList());
-      }
-      messageList?.addAll(firestoreMessages?.docs?.map((e) => e?.data()));
-      var messageListJson = jsonHelp.returnJsonString(messageList);
-      jsonHelp.writeJsonStringToFile(messageFilePath, messageListJson);
-      //deleting all messages in firestore
-      firestoreMessages?.docs?.forEach((element) {
-        element?.reference?.delete();
-      });
-    });
-  }
-
-  void sendMessage(String messageText) async {
-    if (messageText.isEmpty) return;
-
-    var encryptedText = encrypt(receiverData.RSA_public_key, messageText);
-
-    var encryptedMessage = Message(globals.currentUser, receiverData.uuID,
-        DateTime.now().millisecondsSinceEpoch.toString(), encryptedText);
-
-    var message = Message(globals.currentUser, receiverData.uuID,
-        DateTime.now().millisecondsSinceEpoch.toString(), messageText);
-    //sending message to firestore
-    senderMessagesFS?.add(message.toJson());
-    receiverMessagesFS?.add(encryptedMessage.toJson());
-  }
 }
